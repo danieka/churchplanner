@@ -7,6 +7,10 @@ import datetime
 from django.core.signing import Signer
 from django.core.mail import send_mail
 from jquery_fields.fields import ModelMultipleChoiceTokenInputField
+from south.modelsinspector import add_introspection_rules
+
+add_introspection_rules([], ["^planner\.models\.ForeignKey"])
+add_introspection_rules([], ["^planner\.models\.ManyToManyField"])
 
 class ManyToManyField(models.ManyToManyField):
 
