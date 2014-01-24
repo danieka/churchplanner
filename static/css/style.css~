@@ -1,0 +1,72 @@
+input.chart { display: block; 
+    display: inline-block; 
+    position: relative; 
+    height: 2em; 
+    vertical-align: middle; 
+    text-decoration: none; 
+    overflow: hidden; 
+    zoom: 1;
+}
+div.chart{
+    float: left;
+    margin-right:1%;
+    margin-bottom:1%
+}
+div.fieldWrapper{
+    clear: both;
+}
+
+
+label.formLabel{
+    margin-right: 20px;
+}
+
+.multiselect {
+    width: 50em;
+    height: 18em;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;    
+}
+
+.spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -50px; /* half width of the spinner gif */
+    margin-top: -50px; /* half height of the spinner gif */
+    text-align:center;
+    z-index:1234;
+    overflow: auto;
+}
+
+.tool {
+    float:left;
+    margin-left:10px;
+    margin-top:1.3em;
+}
+
+a.export{ 
+    margin-left:1em;
+}
+
+div.overview{
+    margin-bottom:1.5em;
+}
+
+html, body, #wrapper { height: 100%; }
+body > #wrapper { height: auto; min-height: 100%; }
+
+#footer {
+ clear: both;
+ position: relative;
+ z-index: 10;
+ height: 3em;
+ margin-top: -3em;
+ margin-left: 1em;
+}
+
+

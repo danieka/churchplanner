@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block body %}
+<p>Du måste nu bestäma hur du ska logga in i framtiden. </p>
+<a href="/associate/facebook/"> Logga in med Facebook </a>
+<p style="margin-top:3em"> Om du inte har Facebook eller inte vill koppla det hit så kan du även logga in genom att skapa ett lösenord som du kan logga in med. </br>Ditt användarnamn när du loggar in är: {{ user.username }} </p>
+<form action="/account/change_password/" method = "post">
+<div class="form-row">
+    <label for="id_new_password1" class="required formLabel">Nytt lösenord:</label>
+    <input class="formInput" id="id_new_password1" type="password" name="new_password1"></input>
+    
+</div>
+
+<div class="form-row" style="margin-bottom:1em">
+    <label for="id_new_password2" class="required formLabel">Upprepa lösenord:</label>
+    <input class="formInput" id="id_new_password2" type="password" name="new_password2"></input>
+</div>
+
+<input type="submit" value="Submit">
+</form>
+
+<script>
+$("#event_form").submit(function() {
+        var form = $("#change_password_form");
+        jQuery("#ajaxwrapper").load(
+                form.attr('action'),
+                form.serializeArray());
+        });
+{% endblock %}

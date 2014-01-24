@@ -1,0 +1,48 @@
+
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <script language="javascript" type="text/javascript" src="/static/js/libs/jquery.js"></script>
+    
+    
+    <script language="javascript" type="text/javascript" src="/static/js/libs/ui/js/jquery.ui.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/libs/ui/js/jquery.ui.selectmenu.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/libs/ui/js/jquery.uix.multiselect.min.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/libs/ui/js/locales/jquery.uix.multiselect_sv.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/libs/ui/js/locales/jquery.ui.datepicker-sv.js"></script>
+
+    <link id="ui-theme" rel="stylesheet" href="/static/css/custom-theme/jquery-ui.css" />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <link rel="stylesheet" href="/static/css/smoothness/jquery.ui.selectmenu.css" />
+    <link rel="stylesheet" type="text/css" href="http://pontikis.github.io/jui_dropdown/v1.0.4/jquery.jui_dropdown.css"/>
+    <link rel="stylesheet" href="/static/css/jquery.uix.multiselect.css" />
+    
+    <title>{% block title %}Planering - Roseniuskyrkan{% endblock %}</title>
+    
+<!--Source to multiselect is: https://github.com/yanickrochon/jquery.uix.multiselect -->   
+    
+<script>
+ $(function() {
+    $( "button" ).button().click(function( event ) {
+        //event.preventDefault();
+    });
+    
+    $( "a" ).button();
+});
+$(function() {
+$( document ).tooltip({show: {delay:1000}});
+});    
+</script>
+
+</head>
+<body>
+
+<script>
+ $.ajaxSetup ({
+  cache: false
+ });
+</script>
+{% block body %}
+{% endblock %}
+</body>
+</html>

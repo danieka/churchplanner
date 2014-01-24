@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<div id='new_event_launcher' style="width:10em">
+    Nytt evenemang
+</div>
+
+<a href="/logout"> Logga ut </a>
+
+<div class="eventtable" >
+</div>
+
+<div id="resizable" class="ui-widget-content">
+<h3 class="ui-widget-header" id="event_title">Evenemang</h3>
+    <div id="data">
+    </div>
+</div>
+
+<div id="new_event_menu_container" class="ui-widget-content" style="display: none; width:11em">
+   <ul id="new_event_menu">
+   <li id="Service" class="new_event">Gudtjänst</li>
+   </ul>
+</div>
+
+<script>
+
+ 
+function get_events(){
+$.getJSON( "planner/getallevents/", function( data ) {
+    var items = [];
+    $.each( data.events, function( key, val ) {
+    d = new Date(val.timestamp);
+             
+         
+    items.push( "<tr id=" + val.pk + " type=" + val.type + "><td>" + val.title + "</td>" + "<td>" + val.verbose_name + "</td>" +  "<td>"+d.getDate() + "/" + (d.getMonth()+1) + "</td></tr>" );
+    });
+
+
+    $("div.eventtable").html('<table class="eventtable"> \
+            <thead>\
+                <tr>\
+                <th>Titel</th>\
+                <th>Typ</th>\
+                <th>Datum</th>\
+                </tr>\
+            </thead>\
+            <tbody>\
+      <tr>' +items.join( "" ) +  "</tr></tbody></table>"
+    )
+    $("tr").click(function(e) {
+        $("#data").load("/planner/event/" + $(e.target).parent().attr("type") + "/form/" +  $(e.target).parent().attr("id") + "/");
+    });
+    });
+}    
+
+$(function () {
+    get_events();
+    var newEventMenuVisible = false;
+    $( "#new_event_launcher").button();
+    
+    $( "#settings_menu" ).menu();
+
+    $("#new_event_launcher").click(function() {
+        if (newEventMenuVisible == true) {
+            $("#new_event_menu_container").hide();
+            newEventMenuVisible = false;
+            }
+            
+        else {
+        // .position() uses position relative to the offset parent, 
+        var pos = $(this).position();
+
+        // .outerWidth() takes into account border and padding.
+        var width = $(this).outerWidth();
+        
+        //show the menu directly over the placeholder
+        $("#new_event_menu_container").css({
+            position: "absolute",
+            top: (pos.bottom - 101) + "px",
+            left: (pos.left + width) + "px"
+            }).show();
+            
+            $("#new_event_menu_container").position({
+            of: "#new_event_launcher",
+            my: "left top",
+            at: "left bottom",
+            collision: "none"});
+            newEventMenuVisible = true;
+        }
+    });
+    
+    $("#new_event_menu_container").mouseleave(function() {
+        $("#new_event_menu_container").hide();
+        newEventMenuVisible = false;            
+    });
+    
+    $(".new_event").click(function(e) {
+        $("#data").load("/planner/event/" + $(this).attr("id") + "/form/");
+    });
+    
+    
+    
+    dialogOptions = {
+        autoOpen: false,
+        height: 600,
+        width: 1200,
+        modal: true,
+        //appendTo: "#annotate"
+        show: {
+            effect: "blind",
+            duration: 200
+        },
+        hide: {
+            effect: "blind",
+            duration: 200
+        },
+         buttons: {
+            "Avsluta": function() {
+            $( this ).dialog( "close" );
+            },
+        },
+    }
+
+
+    $( "#resizable" ).resizable({
+        minHeight: 150,
+        minWidth: $(window).width() - 30,
+        maxWidth: $(window).width() - 30,
+        handles: 'n, e, s, w',
+    });
+    
+    $( "#resizable" ).width($(window).width() - 30);
+    $( "#resizable" ).height($(window).height()*0.7);
+    
+});
+</script>
+{% endblock %}
+

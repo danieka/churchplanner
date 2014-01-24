@@ -1,0 +1,71 @@
+.formColumn{
+    float:left;
+    margin-top:1.7em;
+}
+
+#submit_div {
+    float:right;
+    padding-top: -10em;
+    margin-right:45%;
+}
+
+table, th, td, tr,{
+    border: 1px solid black;
+}
+
+.eventtable td{
+    width: 15em;
+}
+
+ul {
+    display:inline-block;
+}
+
+.ctrlHolder{
+    margin-top:0.5em;
+}
+
+#div_id_internal_notes, #div_id_description{
+    float:right;
+}
+
+textarea {
+    width:35em;
+    height:35em;
+    margin-bottom:0;
+}
+
+#left_div{
+    line-height: 200px;
+}
+
+#id_title{
+    width: 15em;
+    height: 1em;
+}
+
+#data label{
+    display: inline-block;
+    float: left;
+    clear: left;
+    width: 200px;
+    margin-right:1em;
+    text-align: right;
+}
+
+tr:nth-child(even)           { background-color:#eee; }
+tr:nth-child(odd)              { background-color:#fff; }
+
+#resizable { width: 200px; height: 150px; padding: 5px; overflow: auto}
+#resizable h3 { text-align: center; margin: 0; }
+
+
+#resizable{
+   position: fixed;
+   bottom: 0px;
+}
+
+#new_event_menu
+{
+    list-style-type: none;
+}

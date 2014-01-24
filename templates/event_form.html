@@ -1,0 +1,99 @@
+<script>
+$( document ).ready(function() {
+    $.users = {{users|safe}}
+});
+</script>
+
+{% load crispy_forms_tags %}
+
+<div id="dialog-confirm" title="Är du säker?" style="display:none;">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Evenemanget kommer tas bort permanent och kan ej ångras.</p>
+</div>
+
+<div id="dialog-modal" title="Spara evenemang">
+    <p></p>
+</div>
+
+{% if form.errors %}
+    <p style="color: red;">
+        Vänligen korrigera nedanstående fel.
+        {{ form.non_field_errors }}
+    </p>
+{% endif %}
+
+
+    <div id="ajaxwrapper">
+    {{ form.media }}
+    {% crispy form %}
+    {% csrf_token %}
+    </div>
+
+
+<script>
+ $(function() {
+    
+    datepicker_options = {
+        dateFormat: "yy-mm-dd",
+        firstDay: 1,
+    }
+
+    $( "#id_start_date").datepicker(datepicker_options);
+    $( "#id_publish_date").datepicker(datepicker_options);
+
+    $("#event_title").html("{{ title }}");
+    
+    $("#event_form").submit(function() {
+
+    {% if pk %}
+        var url = "/planner/event/{{type}}/form/{{pk}}/"; // the script where you handle the form input.
+    {% else %}
+        var url = "/planner/event/{{type}}/form/";
+    {% endif %}
+
+    
+    $.ajax({
+           type: "POST",
+           url: url,
+           data: $("#event_form").serialize(), // serializes the form's elements.
+           success: function(data)
+           {
+               get_events();
+               $("#data").load("/planner/event/{{type}}/form/" + data['pk'] + "/");
+           }
+         });
+
+    return false; // avoid to execute the actual submit of the form.
+});
+});
+
+ $(function() {
+$( "#submit" )
+.button()
+.click(function() {
+    });
+    
+$( "#delete" ).button().click(function( event ) {
+        
+    $( "#dialog-confirm" ).dialog({
+        resizable: false,
+        width:350,
+        modal: true,
+        buttons: {
+        "Ta bort evenemang": function() {            
+            $("#data").load("/planner/event/{{type}}/delete/{{pk}}/", function () {
+                $("#data").html("");
+                $("#event_title").html("Evenemang");
+                get_events();
+                });
+            
+            $( this ).dialog( "close" );
+                },
+        "Avbryt": function() {
+            $( this ).dialog( "close" );
+            }
+        }
+        });
+    });     
+});
+
+</script>
