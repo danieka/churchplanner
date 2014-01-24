@@ -6,7 +6,6 @@ import calendar
 from django.shortcuts import render_to_response, redirect, render
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
-from open_facebook.api import OpenFacebook, FacebookAuthorization
 from django.contrib.auth.models import User
 from allaccess.views import OAuthCallback
 from django.contrib.auth.decorators import login_required
@@ -92,14 +91,15 @@ def event_form(request, pk = None, eventtype = None):
 
 @login_required
 def register_page(request):
-    me = request.facebook.get('me/accounts')
-    for page in me['data']:
-        if 'Roseniuskyrkan' in page.values():
-            token = FacebookAuthorization.extend_access_token(page['access_token'])['access_token']
+    pass
+    #me = request.facebook.get('me/accounts')
+    #for page in me['data']:
+        #if 'Roseniuskyrkan' in page.values():
+            #token = FacebookAuthorization.extend_access_token(page['access_token'])['access_token']
            
-    Token.objects.create(token = token)
+    #Token.objects.create(token = token)
     
-    return render(request, 'register_page.html', {'me': "Registrering avklarad, tack!"})
+    #return render(request, 'register_page.html', {'me': "Registrering avklarad, tack!"})
 
 @login_required
 def users(request):
