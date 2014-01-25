@@ -41,3 +41,4 @@ settings.py
 *~
 
 planner/migrations
+planner/import_users.py
