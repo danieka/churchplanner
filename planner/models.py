@@ -91,7 +91,7 @@ class Event(models.Model):
 class Vardag(Event):
     organiser = ForeignKey(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="organiserVardag")
     speaker = ForeignKey(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="speakerVardag")
-    food = models.ManyToManyField(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="food")
+    food = ManyToManyField(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="food")
     music = ManyToManyField(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="vardagmusic", verbose_name = u"Musiker/Lovsång")
     
     class Meta:
