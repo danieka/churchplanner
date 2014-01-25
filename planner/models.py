@@ -63,6 +63,7 @@ class Event(models.Model):
     publish_date = models.DateField(blank = True, null = True, verbose_name="Publiceringsdatum")
     internal_notes = models.CharField(blank = True, null = True, max_length=1000, verbose_name="Anteckningar")
     published = models.BooleanField(default = False)
+    email_sent = models.BooleanField(default = False)
     
     class Meta:
         abstract = True
@@ -94,6 +95,29 @@ class Vardag(Event):
     
     class Meta:
         verbose_name = "VARDag"
+        
+    def send_reminder(self):
+        rlist = [self.organiser.email]
+        message = u"""
+Hej Vänner,
+
+Här kommer en påminnelse om att du har en uppgift på VARDag:
+    
+"""
+        for field in ["speaker", "food", "organ", "music"]:
+            user = eval("self.%s" % field)
+            if user:
+                rlist.append(user.email)
+                message +=  self._meta.get_field(field).verbose_name + ": " + user.first_name + " " + user.last_name + "\n"
+
+        send_mail(
+            subject = "VARDag " + self.event.start_time.date().strftime("%Y-%m-%d"),
+            from_email = sender,
+            recipient_list = set(rlist),
+            message = message+signature,
+            )   
+
+        self.email_sent = True
         
 class Service(Event):
     organiser = ForeignKey(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="organiserService", verbose_name="Ansvarig")
@@ -138,9 +162,7 @@ Här kommer en påminnelse om att du har en uppgift på söndagens gudtjänst en
             message = message+signature,
             )
         
-    @classmethod
-    def search(cls, query):
-        return User.objects.all()
+        self.email_sent = True
     
 class Token(models.Model):
     token = models.CharField(max_length = 250)
