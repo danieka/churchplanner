@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 
 from models import Service, Vardag, valid_events, Token, generate_login_link
 from forms import *
+from open_facebook.api import FacebookAuthorization, OpenFacebook
 
 from django.core.urlresolvers import reverse
 from allaccess.views import OAuthRedirect, OAuthCallback
@@ -18,16 +19,16 @@ from django.contrib.auth import authenticate, login
 
 
 class AssociateRedirect(OAuthRedirect):
-
+    @login_required
     def get_callback_url(self, provider):
         return reverse('associate-callback', kwargs={'provider': provider.name})
 
 
 class AssociateCallback(OAuthCallback):
-
-    def get_or_create_user(self, provider, access, info):
-        return self.request.user
-
+    def handle_new_user(self, provider, access, information):
+        return redirect("/register/")
+    
+    @login_required
     def handle_existing_user(self, provider, user, access, info):
         if user != self.request.user:
             return self.handle_login_failure(provider, "Another user is associated with this account")
@@ -35,12 +36,27 @@ class AssociateCallback(OAuthCallback):
         return super(AssociateCallback, self).handle_existing_user(provider, user, access, info)
 
 class LoginRedirect(OAuthRedirect):
+    
+    def get_additional_parameters(self, provider):
+        if provider.name == 'facebook':
+            return {'scope': "create_event"}
+        return super(AdditionalPermissionsRedirect, self).get_additional_parameters(provider)
 
     def get_callback_url(self, provider):
         return reverse('login-callback', kwargs={'provider': provider.name})
 
 class LoginCallback(OAuthCallback):
-
+    def handle_existing_user(self, provider, user, access, info):
+        if len(Token.objects.all()) < 5:
+            fb = OpenFacebook(access.access_token.split("=")[1])
+            me = fb.get('me/accounts')
+            for page in me['data']:
+                if 'Roseniuskyrkan' in page.values():
+                    token = FacebookAuthorization.extend_access_token(page['access_token'])['access_token']
+                
+            Token.objects.create(token = token)
+        
+        return super(LoginCallback, self).handle_existing_user(provider, user, access, info)
     def handle_new_user(self, provider, access, information):
         return redirect("/register/")
 
@@ -87,18 +103,6 @@ def event_form(request, pk = None, eventtype = None):
             return HttpResponse(response, content_type="application/json")
 
     return render_to_response('event_form.html', {'form': form, 'type': eventtype, 'pk':pk, 'title': title, 'users': users}, context_instance = RequestContext(request))
-
-@login_required
-def register_page(request):
-    pass
-    #me = request.facebook.get('me/accounts')
-    #for page in me['data']:
-        #if 'Roseniuskyrkan' in page.values():
-            #token = FacebookAuthorization.extend_access_token(page['access_token'])['access_token']
-           
-    #Token.objects.create(token = token)
-    
-    #return render(request, 'register_page.html', {'me': "Registrering avklarad, tack!"})
 
 @login_required
 def users(request):
