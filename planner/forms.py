@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
-from django.forms import ModelForm, SelectMultiple, ValidationError, DateInput, TimeInput, DateField, TimeField, Textarea, TextInput
+from django.forms import ModelForm, SelectMultiple, ValidationError, DateInput, Textarea, DateField, TimeField
 from models import Service, Vardag, Occurrence
-from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy
 import pytz
 
-import sys
-sys.path.append("/home/daniel/Code/churchplanner/django-jquery-fields")
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Column, Submit, Button
 from django.contrib.auth.models import User
@@ -15,7 +12,6 @@ import json
 import datetime
 from jquery_fields.fields import ModelMultipleChoiceTokenInputField
 
-import pdb
 
 class ServiceForm(ModelForm):
     start_date = DateField(label="Startdatum")

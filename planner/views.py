@@ -5,16 +5,15 @@ import calendar
 
 from django.shortcuts import render_to_response, redirect, render
 from django.template import RequestContext
-from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse
 from django.contrib.auth.models import User
-from allaccess.views import OAuthCallback
 from django.contrib.auth.decorators import login_required
 
 from models import Service, Vardag, valid_events, Token, generate_login_link
 from forms import *
 
 from django.core.urlresolvers import reverse
-from allaccess.views import OAuthRedirect
+from allaccess.views import OAuthRedirect, OAuthCallback
 from django.contrib.auth import authenticate, login
 
 
