@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.forms import ModelForm, SelectMultiple, ValidationError, DateInput, Textarea, DateField, TimeField
-from models import Service, Vardag, Occurrence, Event
+from models import Service, Vardag, Occurrence, Event, DefaultText
 from django.core.urlresolvers import reverse_lazy
 import pytz
 
@@ -64,6 +64,7 @@ class ServiceForm(EventForm):
         user = kwargs.pop('user', None)
         
         super(ServiceForm, self).__init__(*args, **kwargs)
+        self.fields['description'].initial = DefaultText.objects.get(linked_model="Service").message
         
         self.helper.layout = Layout(
             Column("title", "start_date", "start_time", "end_time", "organiser", "speaker", "meeting_leader", "host", "technician", "music", "organ", "bible_reader", "personal_prayer", "prayer", "facebook_publish", "publish_date"),
@@ -85,6 +86,7 @@ class VardagForm(EventForm):
         user = kwargs.pop('user', None)
         
         super(VardagForm, self).__init__(*args, **kwargs)
+        self.fields['description'].initial = DefaultText.objects.get(linked_model="Vardag").message
         
         self.helper.layout = Layout(
             Column("title", "start_date", "start_time", "end_time", "organiser", "speaker", "food", "music", "facebook_publish", "publish_date"),

@@ -132,7 +132,7 @@ class Service(Event):
     technician = ForeignKey(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="technician", verbose_name = "Teknik")
     
     class Meta:
-        verbose_name = "Gudtjänst"
+        verbose_name = "Gudstjänst"
         
     def send_reminder(self):
         rlist = [self.organiser.email]
@@ -167,3 +167,8 @@ Här kommer en påminnelse om att du har en uppgift på söndagens gudtjänst en
 class Token(models.Model):
     token = models.CharField(max_length = 250)
     creation_date = models.DateField(auto_now_add=True)
+    
+class DefaultText(models.Model):
+    linked_model = models.CharField(max_length = 50)
+    message = models.TextField()
+    
