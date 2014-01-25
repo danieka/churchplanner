@@ -16,6 +16,7 @@ from open_facebook.api import FacebookAuthorization, OpenFacebook
 from django.core.urlresolvers import reverse
 from allaccess.views import OAuthRedirect, OAuthCallback
 from django.contrib.auth import authenticate, login
+from itertools import chain
 
 
 class AssociateRedirect(OAuthRedirect):
@@ -62,10 +63,13 @@ class LoginCallback(OAuthCallback):
 
 @login_required
 def get_events(request, events_to_get = 5):
-    services = Service.objects.all().order_by('event__start_time')[:events_to_get]
     data = []
-    for service in services:
-        data.append({'type': service.__class__.__name__, 'pk': service.pk, 'verbose_name': service._meta.verbose_name, 'title': service.title, 'timestamp':calendar.timegm(service.event.start_time.timetuple()) * 1000})
+    services = Service.objects.all().order_by('event__start_time')
+    vardagar = Vardag.objects.all().order_by('event__start_time')
+    events = chain(services, vardagar)
+    for event in events:
+        print event
+        data.append({'type': event.__class__.__name__, 'pk': event.pk, 'verbose_name': event._meta.verbose_name, 'title': event.title, 'timestamp':calendar.timegm(event.event.start_time.timetuple()) * 1000})
     response = json.dumps({'events': data})
     return HttpResponse(response, content_type="application/json")
 
@@ -100,6 +104,11 @@ def event_form(request, pk = None, eventtype = None):
         if form.is_valid():
             pk = form.save().pk           
             response = json.dumps({'pk': pk, 'response':"%s sparad" % title})
+            return HttpResponse(response, content_type="application/json")
+        
+        else:
+            print form.errors
+            response = json.dumps({'pk': "fail", 'response':"%s failed" % title})
             return HttpResponse(response, content_type="application/json")
 
     return render_to_response('event_form.html', {'form': form, 'type': eventtype, 'pk':pk, 'title': title, 'users': users}, context_instance = RequestContext(request))
