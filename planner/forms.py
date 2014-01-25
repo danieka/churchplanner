@@ -19,6 +19,9 @@ class EventForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
+        for fieldname in ['email_sent', 'published', 'event']:
+            del self.fields[fieldname] # A crude way to exclude fields
+            
         self.fields['description'].widget = Textarea()
         self.fields['internal_notes'].widget = Textarea()
         self.helper = FormHelper()
@@ -30,6 +33,7 @@ class EventForm(ModelForm):
             self.fields['start_time'].initial = start_time.time().strftime("%X")
             if self.instance.event.end_time:
                 self.fields['end_time'].initial = self.instance.event.end_time.time().strftime("%X")
+               
                 
     def save(self, commit=True):
         instance = super(EventForm, self).save(commit=False)
@@ -55,7 +59,6 @@ class EventForm(ModelForm):
 class ServiceForm(EventForm):
     class Meta:
         model = Service        
-        exclude = ['event', 'published']
     
     def __init__(self, *args, **kwargs):        
         user = kwargs.pop('user', None)
@@ -77,7 +80,6 @@ class ServiceForm(EventForm):
 class VardagForm(EventForm):
     class Meta:
         model = Vardag
-        exclude = ['event', 'published']
         
     def __init__(self, *args, **kwargs):        
         user = kwargs.pop('user', None)
