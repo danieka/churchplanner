@@ -19,7 +19,6 @@ class ManyToManyField(models.ManyToManyField):
         # while letting the caller override them.
         defaults = {'form_class': ModelMultipleChoiceTokenInputField, "configuration": {}, "queryset": User.objects.all(), "json_source":'http://shell.loopj.com/tokeninput/tvshows.php'}
         defaults.update(kwargs)
-        print defaults
         return super(ManyToManyField, self).formfield(**defaults)
     
 class ForeignKey(models.ManyToManyField):
@@ -29,7 +28,6 @@ class ForeignKey(models.ManyToManyField):
         # while letting the caller override them.
         defaults = {'form_class': ModelMultipleChoiceTokenInputField, "configuration": {'tokenLimit': 1}, "queryset": User.objects.all(), "json_source":'/planner/users/'}
         defaults.update(kwargs)
-        print defaults
         return super(ForeignKey, self).formfield(**defaults)    
     
 # Create your models here.
