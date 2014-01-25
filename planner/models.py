@@ -34,7 +34,7 @@ class ForeignKey(models.ManyToManyField):
     
 # Create your models here.
 valid_events = ["Vardag", "Service"]
-page_id = 185831898118166
+page_id = 185831898118166 #Rossenspage id
 sender = "daniel.karlsson@roseniuskyrkan.se"
 signature = u"""
 Med Vänliga Hälsningar
@@ -64,6 +64,7 @@ class Event(models.Model):
     facebook_publish = models.BooleanField(default = False, verbose_name="Facebook")
     publish_date = models.DateField(blank = True, null = True, verbose_name="Publiceringsdatum")
     internal_notes = models.CharField(blank = True, null = True, max_length=1000, verbose_name="Anteckningar")
+    published = models.BooleanField(default = False)
     
     class Meta:
         abstract = True
@@ -72,10 +73,11 @@ class Event(models.Model):
         return self.title
     
     def publish(self):
-        #token = Token.objects.all()[:1].get().token
-        #fb = OpenFacebook(token)
-        #fb.set(str(page_id) + "/events", no_feed_story = "true", name=self.title, description = self.description, start_time = self.event.start_time.isoformat(), location_id=page_id)
-        print "publish"
+        if not settings.DEBUG:
+            token = Token.objects.all()[:1].get().token
+            fb = OpenFacebook(token)
+            print fb.set(str(page_id) + "/events", no_feed_story = "true", name=self.title, description = self.description, start_time = self.event.start_time.isoformat(), location_id=page_id, picture = "584610018240350")
+            self.published = True
         
     def save(self, *args, **kwargs):
         super(Event, self).save(*args, **kwargs)
