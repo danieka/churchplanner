@@ -1,6 +1,6 @@
 ##churchplanner
 
-####This isn't really for public consumption yet.
+#####This isn't really for public consumption yet.
 
 This will eventually be a web tool for planning your church's events and activites.
 
