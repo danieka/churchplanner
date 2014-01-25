@@ -68,7 +68,6 @@ def get_events(request, events_to_get = 5):
     vardagar = Vardag.objects.all().order_by('event__start_time')
     events = chain(services, vardagar)
     for event in events:
-        print event
         data.append({'type': event.__class__.__name__, 'pk': event.pk, 'verbose_name': event._meta.verbose_name, 'title': event.title, 'timestamp':calendar.timegm(event.event.start_time.timetuple()) * 1000})
     response = json.dumps({'events': data})
     return HttpResponse(response, content_type="application/json")
