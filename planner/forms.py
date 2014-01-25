@@ -53,11 +53,10 @@ class EventForm(ModelForm):
         model = Event
 
 class ServiceForm(EventForm):
-
     class Meta:
-        model = Service
-        fields = ["title", "start_date", "start_time", "end_time", "organiser", "speaker", "meeting_leader", "technician", "host", "music", "organ", "bible_reader", "personal_prayer", "prayer" ,"facebook_publish", "publish_date", "description", "internal_notes"]
-
+        model = Service        
+        exclude = ['event', 'published']
+    
     def __init__(self, *args, **kwargs):        
         user = kwargs.pop('user', None)
         
@@ -74,4 +73,25 @@ class ServiceForm(EventForm):
            
         for fieldname in ['host', 'music', 'personal_prayer']:
                 self.fields[fieldname].help_text = None
-    
+                
+class VardagForm(EventForm):
+    class Meta:
+        model = Vardag
+        exclude = ['event', 'published']
+        
+    def __init__(self, *args, **kwargs):        
+        user = kwargs.pop('user', None)
+        
+        super(VardagForm, self).__init__(*args, **kwargs)
+        
+        self.helper.layout = Layout(
+            Column("title", "start_date", "start_time", "end_time", "organiser", "speaker", "food", "music", "facebook_publish", "publish_date"),
+            Column("description", "internal_notes", css_id="left_div"),
+            Div(
+                Submit('submit', 'Spara', css_id="submit"), 
+                Button('delete', 'Ta bort evenemang', css_id="delete"),
+                css_id="submit_div"),
+        ) 
+            
+        for fieldname in ['food', 'music']:
+                self.fields[fieldname].help_text = None
