@@ -2,6 +2,7 @@
 import json
 import datetime
 import calendar
+import operator
 
 from django.shortcuts import render_to_response, redirect, render
 from django.template import RequestContext
@@ -64,9 +65,18 @@ class LoginCallback(OAuthCallback):
 @login_required
 def get_events(request, events_to_get = 5):
     data = []
-    services = Service.objects.all().order_by('event__start_time')
-    vardagar = Vardag.objects.all().order_by('event__start_time')
-    events = chain(services, vardagar)
+    events = []
+    if 'event_type' in request.GET:
+        for event in request.GET['event_type'].split(","):
+            events = chain(events, eval("%s.objects.all()" % event))
+            
+    else: #Means we are returning all events
+        services = Service.objects.all().order_by('event__start_time')
+        vardagar = Vardag.objects.all().order_by('event__start_time')
+        events = chain(services, vardagar)
+    
+    events = list(events)
+    events.sort(key=operator.attrgetter('event.start_time'))
     for event in events:
         data.append({'type': event.__class__.__name__, 'pk': event.pk, 'verbose_name': event._meta.verbose_name, 'title': event.title, 'timestamp':calendar.timegm(event.event.start_time.timetuple()) * 1000})
     response = json.dumps({'events': data})

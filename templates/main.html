@@ -2,13 +2,23 @@
 
 {% block body %}
 
+<div id="sidebar">
+<h4>Evenemang</h4>
+    <ul class="label_selector" id="event_selector">
+    {% for event in events %}
+        <li class="label_selector" value={{event.type}}>{{event.verbose_name}}</li>
+    {% endfor %}
+    </ul>
+</div>
+<div id="menu">
 <div id='new_event_launcher' style="width:10em">
     Nytt evenemang
 </div>
 
 <a href="/logout"> Logga ut </a>
+</div>
 
-<div class="eventtable" >
+<div id="eventtable" >
 </div>
 
 <div id="resizable" class="ui-widget-content">
@@ -19,16 +29,27 @@
 
 <div id="new_event_menu_container" class="ui-widget-content" style="display: none; width:11em">
    <ul id="new_event_menu">
-   <li id="Service" class="new_event">Gudtjänst</li>
-   <li id="Vardag" class="new_event">Vardag</li>
+    {% for event in events %}
+        <li class="new_event" value={{event.type}}>{{event.verbose_name}}</li>
+    {% endfor %}
    </ul>
 </div>
 
 <script>
+function get_events() {
+    if ($.selected_events.length == 0){
+        $.getJSON( "planner/getevents/", function( data ) {
+            update_events(data);
+            });
+        }
+    else {
+        $.getJSON( "planner/getevents/", "event_type="+$.selected_events, function( data ) {
+            update_events(data);
+            });
+    }
+} 
 
- 
-function get_events(){
-$.getJSON( "planner/getallevents/", function( data ) {
+function update_events(data){
     var items = [];
     $.each( data.events, function( key, val ) {
     d = new Date(val.timestamp);
@@ -38,7 +59,7 @@ $.getJSON( "planner/getallevents/", function( data ) {
     });
 
 
-    $("div.eventtable").html('<table class="eventtable"> \
+    $("#eventtable").html('<table class="eventtable"> \
             <thead>\
                 <tr>\
                 <th>Titel</th>\
@@ -49,14 +70,32 @@ $.getJSON( "planner/getallevents/", function( data ) {
             <tbody>\
       <tr>' +items.join( "" ) +  "</tr></tbody></table>"
     )
+    
     $("tr").click(function(e) {
         $("#data").load("/planner/event/" + $(e.target).parent().attr("type") + "/form/" +  $(e.target).parent().attr("id") + "/");
     });
-    });
-}    
+}
 
 $(function () {
+    $.selected_events = [];
     get_events();
+    $( "ul.label_selector").bind( "mousedown", function ( e ) {
+        e.metaKey = true;
+        val = $(e.target).attr("value");
+        
+        if ($.inArray(val, $.selected_events) != -1){
+            $.selected_events.splice($.inArray(val, $.selected_events), 1);
+            }
+        else {
+            $.selected_events.push(val);
+            }
+        console.log($.selected_events);
+        get_events();
+      } ).selectable();
+    
+    $("#event_selector .li").click(function() {
+        console.log($(this));            
+    });
     var newEventMenuVisible = false;
     $( "#new_event_launcher").button();
     
@@ -97,7 +136,7 @@ $(function () {
     });
     
     $(".new_event").click(function(e) {
-        $("#data").load("/planner/event/" + $(this).attr("id") + "/form/");
+        $("#data").load("/planner/event/" + $(this).attr("value") + "/form/");
     });
     
     
