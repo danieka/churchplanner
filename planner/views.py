@@ -66,8 +66,8 @@ class LoginCallback(OAuthCallback):
 def get_events(request, events_to_get = 5):
     data = []
     events = []
-    if 'event_type' in request.GET:
-        for event in request.GET['event_type'].split(","):
+    if 'eventtype' in request.GET:
+        for event in request.GET['eventtype'].split(","):
             events = chain(events, eval("%s.objects.all()" % event))
             
     else: #Means we are returning all events
@@ -91,7 +91,7 @@ def event_form(request, pk = None, eventtype = None):
         l.append({'id': user.pk, 'name': user.first_name + " " +  user.last_name})
     users = json.dumps(l, ensure_ascii=False)
     
-    if pk and (eventtype in valid_events):
+    if pk:
             instance = eval("%s.objects.get(pk=pk)" % eventtype)
     
     if request.method == "GET":

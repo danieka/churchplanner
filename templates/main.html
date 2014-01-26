@@ -43,7 +43,7 @@ function get_events() {
             });
         }
     else {
-        $.getJSON( "planner/getevents/", "event_type="+$.selected_events, function( data ) {
+        $.getJSON( "planner/getevents/", "eventtype="+$.selected_events, function( data ) {
             update_events(data);
             });
     }
