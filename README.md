@@ -28,6 +28,14 @@ Extract src and styles in static/jquery_fields/tokeninput
 Last you need to install RabbitMQ, or some other celery backend.
 
 ###Configuration
+In churchplanner/suggested_settings.py are the settings you can use as a starting point. The server I run
+use Nginx/Gunicorn for serving static files and django. I use RabbitMQ as a celery backend. The Google-able
+guides are much better than anything I can write.
+
+Once you've got everything up and running you need to add provider of Oauth-login. Log inte the admin interface 
+and follow the instructions here: http://django-all-access.readthedocs.org/en/v0.5.X/providers.html#facebook-example
+
+###Usage
 
 More info coming
 
