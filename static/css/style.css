@@ -1,4 +1,5 @@
 #sidebar {
+    clear:both;
     float: left;
     width: 15%;
     height: 30%;
@@ -6,6 +7,10 @@
 }
 h4 {
     margin-bottom:1%;
+}
+
+.select_title {
+    margin-left:20px;
 }
 
 ul.label_selector{
@@ -26,11 +31,16 @@ li.label_selector{
 .ui-selected { background: #EBEBEB;}
 
 #menu {
-    margin-left: 25%;
+    padding-top: 40px;
+    margin-left: 320px;
 }
+.new_event{
+    float: left;
+}
+
 #eventtable {
-    margin-left: 13s%;
-    margin-top: 1%
+    margin-left: 270px;
+    margin-top: 27px;
 }
 
 #resizable{
@@ -41,12 +51,11 @@ li.label_selector{
 
 .formColumn{
     float:left;
-    margin-top:1.7em;
 }
 
 #submit_div {
     float:right;
-    padding-top: -10em;
+    margin-top:10px;
     margin-right:45%;
 }
 
@@ -67,29 +76,23 @@ ul {
 }
 
 #div_id_internal_notes, #div_id_description{
-    float:right;
+    margin-left: 5%;
+    float:left;
+    display: inline;
 }
 
 textarea {
-    width:35em;
-    height:35em;
+    width:30em;
+    height:20em;
     margin-bottom:0;
-}
-
-#left_div{
-    line-height: 200px;
-}
-
-#id_title{
-    width: 15em;
-    height: 1em;
+    display:block;
 }
 
 #data label{
     display: inline-block;
     float: left;
     clear: left;
-    width: 200px;
+    width: 160px;
     margin-right:1em;
     text-align: right;
 }
@@ -100,10 +103,50 @@ tr:nth-child(odd)              { background-color:#fff; }
 #resizable { width: 200px; height: 150px; padding: 5px; overflow: auto}
 #resizable h3 { text-align: center; margin: 0; }
 
-
+.textinput .dateinput .timeinput {
+    overflow: hidden; 
+    height: auto !important; 
+    height: 1%;
+    width: 200px;
+    border: 1px solid #999;
+    cursor: text;
+    font-size: 12px;
+    font-family: Verdana;
+    z-index: 999;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    list-style-type: none;
+    clear: left;
+    border-radius:0px;
+}
 
 
 #new_event_menu
 {
     list-style-type: none;
+}
+
+/* handle on the right */
+.ui-resizable-n {
+    height: 20px;
+}
+
+#left_div label{
+    clear: none;
+    float: none;
+    margin-left:auto;
+    margin-right:auto;
+    display: block;
+    width: auto;
+    display: auto;
+    text-align:center;
+}
+
+#left_div {
+    width: 80em;
+}
+
+.hover {
+    background: #E0EFF0 !important;
 }

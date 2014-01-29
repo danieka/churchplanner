@@ -1,7 +1,36 @@
 {% extends "base.html" %}
 
 {% block body %}
+<img src="http://roseniuskyrkan.se.hemsida.eu/wp-content/uploads/2013/08/copy-logo_mork.png">
 
+<div style="position:absolute;top:50%;bottom:50%;height:1px;overflow:visible;width:100%;display:block">
+<div style="position:absolute;left:50%;width:800px;height:100px;margin-left:-10em;margin-top:-10em">
+<h2 style="margin-left:1em;">Rossens planeringsverktyg</h2>
 <a href="/login/facebook/"> Logga in med Facebook </a>
+{% if form.errors %}
+<p>Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+<form method="post" action="{% url "django.contrib.auth.views.login" %}">
+{% csrf_token %}
+<table>
+<tr>
+    <td>Användarnamn</td>
+    <td>{{ form.username }}</td>
+</tr>
+<tr>
+    <td>Lösenord</td>
+    <td>{{ form.password }}</td>
+</tr>
+</table>
+
+<input type="submit" value="Logga in" style="margin-left:10em;margin-top:1em;margin-bottom:1em;" />
+<input type="hidden" name="next" value="{{ next }}" />
+</form>
+
+<div style="float:clear;margin-left:1em">
+Support: 070-34 76 545, danieka@kth.se
+</div>
+
 
 {% endblock %}

@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 
 {% block body %}
-
+<div id="logo">
+</div>
 <div id="sidebar">
-<h4>Evenemang</h4>
+<h4 class="select_title">Evenemang</h4>
     <ul class="label_selector" id="event_selector">
     {% for event in events %}
         <li class="label_selector" value={{event.type}}>{{event.verbose_name}}</li>
@@ -11,8 +12,15 @@
     </ul>
 </div>
 <div id="menu">
-<div id='new_event_launcher' style="width:10em">
+<div id='new_event_launcher'>
     Nytt evenemang
+   <div id="new_event_menu_container" class="ui-widget-content" style="display: none; width:10.5em">
+   <ul id="new_event_menu">
+    {% for event in events %}
+        <li class="new_event" value={{event.type}}>{{event.verbose_name}}</li>
+    {% endfor %}
+   </ul>
+</div>
 </div>
 
 <a href="/logout"> Logga ut </a>
@@ -27,13 +35,7 @@
     </div>
 </div>
 
-<div id="new_event_menu_container" class="ui-widget-content" style="display: none; width:11em">
-   <ul id="new_event_menu">
-    {% for event in events %}
-        <li class="new_event" value={{event.type}}>{{event.verbose_name}}</li>
-    {% endfor %}
-   </ul>
-</div>
+
 
 <script>
 function get_events() {
@@ -61,7 +63,7 @@ function update_events(data){
 
     $("#eventtable").html('<table class="eventtable"> \
             <thead>\
-                <tr>\
+                <tr style="background-color: #fff !important;">\
                 <th>Titel</th>\
                 <th>Typ</th>\
                 <th>Datum</th>\
@@ -74,6 +76,10 @@ function update_events(data){
     $("tr").click(function(e) {
         $("#data").load("/planner/event/" + $(e.target).parent().attr("type") + "/form/" +  $(e.target).parent().attr("id") + "/");
     });
+    
+    $("tr").hover(function(){
+        $(this).toggleClass('hover');      
+        });
 }
 
 $(function () {
@@ -93,21 +99,21 @@ $(function () {
         get_events();
       } ).selectable();
     
+    $( "li.label_selector").hover(function(){
+        $(this).toggleClass('hover');      
+        });
+        
+    
     $("#event_selector .li").click(function() {
         console.log($(this));            
     });
-    var newEventMenuVisible = false;
-    $( "#new_event_launcher").button();
     
+    $( "#new_event_launcher").button();
+    $( "#new_event_launcher").css('width', '10.5em');
     $( "#settings_menu" ).menu();
 
-    $("#new_event_launcher").click(function() {
-        if (newEventMenuVisible == true) {
-            $("#new_event_menu_container").hide();
-            newEventMenuVisible = false;
-            }
-            
-        else {
+    $("#new_event_launcher").mouseenter(function() {
+
         // .position() uses position relative to the offset parent, 
         var pos = $(this).position();
 
@@ -126,13 +132,14 @@ $(function () {
             my: "left top",
             at: "left bottom",
             collision: "none"});
-            newEventMenuVisible = true;
-        }
     });
     
     $("#new_event_menu_container").mouseleave(function() {
-        $("#new_event_menu_container").hide();
-        newEventMenuVisible = false;            
+        $("#new_event_menu_container").hide();         
+    });
+    
+    $("#new_event_launcher").mouseleave(function() {
+        $("#new_event_menu_container").hide();         
     });
     
     $(".new_event").click(function(e) {
@@ -167,7 +174,7 @@ $(function () {
         minHeight: 150,
         minWidth: $(window).width() - 30,
         maxWidth: $(window).width() - 30,
-        handles: 'n, e, s, w',
+        handles: 'n',
     });
     
     $( "#resizable" ).width($(window).width() - 30);

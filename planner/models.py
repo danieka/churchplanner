@@ -58,10 +58,10 @@ class Event(models.Model):
     
     event = models.ForeignKey(Occurrence, null = True, verbose_name="Tidpunkt")
     title = models.CharField(max_length=100, verbose_name="Titel")
-    description = models.CharField(blank = True, null = True, max_length=1000, verbose_name="Beskrivning")
+    description = models.CharField(blank = True, null = True, max_length=4000, verbose_name="Beskrivning")
     facebook_publish = models.BooleanField(default = False, verbose_name="Facebook")
     publish_date = models.DateField(blank = True, null = True, verbose_name="Publiceringsdatum")
-    internal_notes = models.CharField(blank = True, null = True, max_length=1000, verbose_name="Anteckningar")
+    internal_notes = models.CharField(blank = True, null = True, max_length=4000, verbose_name="Anteckningar")
     published = models.BooleanField(default = False)
     email_sent = models.BooleanField(default = False)
     
@@ -85,7 +85,7 @@ class Event(models.Model):
             
     def delete(self, *args, **kwargs):
         self.event.delete()
-        super(Event, self).save(*args, **kwargs)
+        super(Event, self).delete(*args, **kwargs)
 
 class Vardag(Event):
     organiser = ForeignKey(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="organiserVardag")
