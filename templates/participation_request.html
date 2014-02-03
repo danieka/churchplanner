@@ -1,0 +1,12 @@
+Hej {{name}}!
+
+Vi undrar om du kan hjälpa till på följande datum:
+{% for event in events %}
+{{event.name}} {{event.date}} {{event.role}}
+{% endfor %}
+
+För att svara så klickar du på länken nedan och fyller i när du kan.
+<a href="{{ url|safe }}"> {{url|safe}} </a>
+
+MVH
+Daniel Karlsson

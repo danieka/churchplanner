@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block body %}
+<table>
+<tr>
+<th>Evenemang</th>
+<th>Datum</th>
+<th>Uppgift</th>
+</tr>
+{% for event in events %}
+<tr><td>{{event.name}}</td><td>{{event.date}}</td><td>{{event.role}}</td> 
+<td>
+<form action="/planner/participation/{{event.pk}}/" method="post">
+<a onclick="$(this).parent().submit();">Kan medverka</a>
+{% csrf_token %}
+<input type="hidden" name="accept" value="True">
+</form>
+</td>
+<td>
+<form action="/planner/participation/{{event.pk}}/" method="post">
+<a onclick="$(this).parent().submit();">Kan inte medverka</a>
+{% csrf_token %}
+<input type="hidden" name="accept" value="False">
+</form>
+</td>
+</tr>
+{% endfor %}
+</table>
+
+<script>
+$("form").submit( function() {
+    console.log();
+    $.ajax({
+           type: "POST",
+           url: $(this).attr("action"),
+           data: $(this).serialize(), // serializes the form's elements.
+           success: function(data)
+           {
+               console.log("great success");
+           }
+         });
+         
+    return false;
+});
+</script>
+{% endblock %}
