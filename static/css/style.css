@@ -1,3 +1,6 @@
+body {
+    font-size:85%;
+}
 #sidebar {
     clear:both;
     float: left;
@@ -35,7 +38,9 @@ li.label_selector{
     margin-left: 320px;
 }
 .new_event{
-    float: left;
+    margin-left:-2em;
+    padding-left:-4em;
+    
 }
 
 #eventtable {
@@ -43,11 +48,6 @@ li.label_selector{
     margin-top: 27px;
 }
 
-#resizable{
-   clear: both;
-   position: fixed;
-   bottom: 0px;
-}
 
 .formColumn{
     float:left;
@@ -100,7 +100,9 @@ textarea {
 tr:nth-child(even)           { background-color:#eee; }
 tr:nth-child(odd)              { background-color:#fff; }
 
-#resizable { width: 200px; height: 150px; padding: 5px; overflow: auto}
+#tabs { width: 1000px; height: 150px; padding: 5px; overflow: auto;    clear: both;
+   position: fixed;
+   bottom: 0px;}
 #resizable h3 { text-align: center; margin: 0; }
 
 .textinput .dateinput .timeinput {
@@ -149,4 +151,22 @@ tr:nth-child(odd)              { background-color:#fff; }
 
 .hover {
     background: #E0EFF0 !important;
+}
+
+ /* force a height so the tabs don't jump as content height changes */
+#tabs .ui-tabs-nav{
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+.tabs {
+    margin-top:2.5em;
+}
+
+.thumbnail{
+    float: left;
+    display: inline;
+    text-align:center;
+    cursor: pointer;
 }

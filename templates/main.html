@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 
 {% block body %}
-<div id="logo">
-</div>
 <div id="sidebar">
 <h4 class="select_title">Evenemang</h4>
     <ul class="label_selector" id="event_selector">
@@ -29,11 +27,21 @@
 <div id="eventtable" >
 </div>
 
-<div id="resizable" class="ui-widget-content">
-<h3 class="ui-widget-header" id="event_title">Evenemang</h3>
-    <div id="data">
-    </div>
+<!--<div id="resizable" class="ui-widget-content">
+<h3 class="ui-widget-header" id="event_title">Evenemang</h3>-->
+<div id="tabs">
+<ul>
+<li><a href="#data">Planering</a></li>
+<li><a href="#documents">Dokument</a></li>
+</ul>
+
+<div id="data" class ="tabs">
 </div>
+<div id="documents" class = "tabs">
+
+</div>
+</div>
+<!--</div>-->
 
 
 
@@ -75,6 +83,7 @@ function update_events(data){
     
     $("tr").click(function(e) {
         $("#data").load("/planner/event/" + $(e.target).parent().attr("type") + "/form/" +  $(e.target).parent().attr("id") + "/");
+        $("#documents").load("/fileuploader/" + $(e.target).parent().attr("id") +"/");
     });
     
     $("tr").hover(function(){
@@ -95,7 +104,6 @@ $(function () {
         else {
             $.selected_events.push(val);
             }
-        console.log($.selected_events);
         get_events();
       } ).selectable();
     
@@ -143,7 +151,7 @@ $(function () {
     });
     
     $(".new_event").click(function(e) {
-        $("#data").load("/planner/event/" + $(this).attr("value") + "/form/");
+        $("#data").load("/planner/event/" + $(this).attr("value") + "/form/");     
     });
     
     
@@ -170,15 +178,25 @@ $(function () {
     }
 
 
-    $( "#resizable" ).resizable({
+
+    
+ 
+    
+    $( "#tabs" ).resizable({
         minHeight: 150,
         minWidth: $(window).width() - 30,
         maxWidth: $(window).width() - 30,
         handles: 'n',
     });
     
-    $( "#resizable" ).width($(window).width() - 30);
-    $( "#resizable" ).height($(window).height()*0.7);
+    $( "#tabs" ).width($(window).width() - 30);
+    $( "#tabs" ).height($(window).height()*0.7);
+    $("#tabs").tabs();
+    
+    $( window ).resize(function() {
+        $( "#tabs" ).width($(window).width() - 30);
+        $( "#tabs" ).height($(window).height()*0.7);
+    });
     
 });
 </script>

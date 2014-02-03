@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from models import Service, Vardag, valid_events, Token, generate_login_link
+from models import Token, Document
 from forms import *
 from open_facebook.api import FacebookAuthorization, OpenFacebook
 
@@ -19,6 +19,10 @@ from allaccess.views import OAuthRedirect, OAuthCallback
 from django.contrib.auth import authenticate, login
 from itertools import chain
 
+import os, StringIO
+from django.conf import settings
+from django.views.decorators.http import require_POST
+from tasks import *
 
 class AssociateRedirect(OAuthRedirect):
     @login_required
@@ -67,18 +71,14 @@ def get_events(request, events_to_get = 5):
     data = []
     events = []
     if 'eventtype' in request.GET:
-        for event in request.GET['eventtype'].split(","):
-            events = chain(events, eval("%s.objects.all()" % event))
+        for eventtype in request.GET['eventtype'].split(","):
+            events = chain(events, Event.objects.filter(event__start_time__gte= datetime.datetime.now(), event_type__name=eventtype))
             
     else: #Means we are returning all events
-        services = Service.objects.all().order_by('event__start_time')
-        vardagar = Vardag.objects.all().order_by('event__start_time')
-        events = chain(services, vardagar)
-    
-    events = list(events)
-    events.sort(key=operator.attrgetter('event.start_time'))
+        events = Event.objects.filter(event__start_time__gte= datetime.datetime.now()).order_by("event__start_time")
+
     for event in events:
-        data.append({'type': event.__class__.__name__, 'pk': event.pk, 'verbose_name': event._meta.verbose_name, 'title': event.title, 'timestamp':calendar.timegm(event.event.start_time.timetuple()) * 1000})
+        data.append({'type': event.event_type.name, 'pk': event.pk, 'verbose_name': event.event_type.name, 'title': event.title, 'timestamp':calendar.timegm(event.event.start_time.timetuple()) * 1000})
     response = json.dumps({'events': data})
     return HttpResponse(response, content_type="application/json")
 
@@ -92,23 +92,26 @@ def event_form(request, pk = None, eventtype = None):
     users = json.dumps(l, ensure_ascii=False)
     
     if pk:
-            instance = eval("%s.objects.get(pk=pk)" % eventtype)
+            instance = Event.objects.get(pk = pk)
     
     if request.method == "GET":
         if pk:
             title = instance.title
-            form = eval("%sForm(instance = instance, user = request.user)" % eventtype)
+            form = EventForm(instance = instance, user = request.user, event_type = eventtype)
         else:
-            title = ("Ny %s" % eval("%s._meta.verbose_name" % eventtype))
-            form = eval("%sForm(user=request.user)" % eventtype)
+            title = ("Ny %s" % eventtype)
+            form = EventForm(user=request.user, event_type = eventtype)
 
 
     elif request.method == "POST":
-        title = eval("%s._meta.verbose_name" % eventtype)
+        title = eventtype
         if pk:
-            form = eval("%sForm(request.POST, user = request.user, instance=instance)" %eventtype)
+            form = EventForm(request.POST, instance = instance, user = request.user, event_type = eventtype)
+
         else:
-            form = eval("%sForm(request.POST, user = request.user)" %eventtype)
+            form = EventForm(request.POST, user = request.user, event_type = eventtype)
+
+        print form.is_valid()
         
         if form.is_valid():
             pk = form.save().pk           
@@ -119,7 +122,7 @@ def event_form(request, pk = None, eventtype = None):
             print form.errors
             response = json.dumps({'pk': "fail", 'response':"%s failed" % title})
             return HttpResponse(response, content_type="application/json")
-
+        
     return render_to_response('event_form.html', {'form': form, 'type': eventtype, 'pk':pk, 'title': title, 'users': users}, context_instance = RequestContext(request))
 
 @login_required
@@ -146,5 +149,41 @@ def account_initialize(request):
         return render(request, 'register.html')
     
 def test(request):
-    resp = generate_login_link(pk=request.GET['pk'])
+    resp = "a"
+    send_email_participation()
     return HttpResponse(resp, content_type="application/json")
+
+@login_required
+def fileuploader(request, pk):
+    files = Event.objects.get(pk = pk).documents.all()
+        
+    if request.method == "POST":
+        form = DocumentForm(request.POST, request.FILES, user = request.user, pk=pk)
+        if form.is_valid():
+            form.save()            
+     
+    form = DocumentForm(user = request.user)
+    return render_to_response('fileuploader.html', {'form': form, 'pk': pk, 'files': files}, context_instance = RequestContext(request))
+
+def participation_form(request, pk = None):
+    if pk and request.method == "POST":
+        participation = Participation.objects.get(pk = pk)
+        if request.POST["accept"] == "true":
+            participation.attending = "true"
+        elif request.POST["accept"] == "false":
+            participation.attending = "false"
+        participation.save()
+            
+
+    if not request.user:
+        user = authenticate(hash=request.GET['hash'], pk = request.GET['user'])
+    else:
+        user = request.user
+        
+    unanswered = user.participation_set.filter(attending="null")
+    events = []
+    for event in unanswered:
+        events.append({'name': event.event.title, 'date': event.event.event.start_time.isoformat(), 'role': event.role.name, 'pk': event.pk})
+    return render(request, 'participation_form.html', {'events': events})
+
+

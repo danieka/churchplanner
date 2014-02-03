@@ -64,6 +64,7 @@ class ModelMultipleChoiceTokenInputField(MultipleTokenInputFieldMixin, ModelMult
     choices = []    # choices are always equal to field value, look into 'prepare_value' implementation
 
     def __init__(self, queryset, json_source, *args, **kwargs):
+        self.event = kwargs.pop('event', None)
         super(ModelMultipleChoiceTokenInputField, self).__init__(queryset, json_source, *args, **kwargs)
 
     def prepare_value(self, value):
@@ -72,7 +73,8 @@ class ModelMultipleChoiceTokenInputField(MultipleTokenInputFieldMixin, ModelMult
         for obj in self.clean(value): 
             obj = self.queryset.get(pk=obj)
             if hasattr(obj, "username"):
-                choices.append((super(ModelMultipleChoiceTokenInputField, self).prepare_value(obj), obj.first_name + " " + obj.last_name))
+                status = obj.participation_set.filter(event = self.event, user = obj)[0].attending
+                choices.append((super(ModelMultipleChoiceTokenInputField, self).prepare_value(obj), obj.first_name + " " + obj.last_name + '<object status="%s">' % (status)))
             else:
                 choices.append((super(ModelMultipleChoiceTokenInputField, self).prepare_value(obj), self.label_from_instance(obj)))
         self.widget.choices = choices

@@ -1,41 +1,26 @@
 # -*- coding: utf-8 -*-
-import os, sys
-from django.forms import ModelForm
-from django.contrib.auth.models import User
 from django.test import TestCase
-from models import Service
-import pdb
+from django.contrib.auth.models import User
+from django.test import Client
 
-
-from jquery_fields.fields import ModelMultipleChoiceTokenInputField
-from jquery_fields.widgets import TokenInputWidget
-
-class TestForm(ModelForm):
-    configuration = {
-            'hintText': 'Skriv in ett namn',
-            'noResultsText': "Ingen träff",
-            'searchingText': 'Söker',
-            }
+class EventFormTestCase(TestCase):
+    fixtures = ['initial_data.json']
     
-    host = ModelMultipleChoiceTokenInputField(User.objects.all(), json_source=('users'), configuration=configuration)
-    
-    class Meta:
-        fields = ['host']
-        
-        
-
-        model = Service
-
-        
-class TestModelMultipleChoiceTokenInputField(TestCase):
     def setUp(self):
-        self.form = TestForm()
+        user = User.objects.create_user('temporary', 'temporary@gmail.com', 'temporary')
+        self.client = Client(enforce_csrf_checks=True)
         
-    def testWidget(self):
-        print self.form.fields['host'].widget
-        self.assertIsInstance(self.form.fields['host'].widget, TokenInputWidget)
-        
+        self.client.login(username='temporary', password='temporary')
+        self.client.get('/planner/event/Gudstjänst/form/')
+        self.csrf_token = self.client.cookies['csrftoken'].value
         
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_get(self):
+        
+        resp = self.client.get('/planner/event/Gudstjänst/form/')
+        self.assertEqual(resp.status_code, 200)
+
+        
+    def test_post(self):
+        resp = self.client.post('/planner/event/Gudstjänst/form/', {'csrfmiddlewaretoken': self.csrf_token, 'title': 'test', 'start_date': "2014-01-30", "start_time": "11:00"})
+        self.assertEqual(resp.status_code, 200)

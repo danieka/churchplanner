@@ -14,7 +14,7 @@ class TokenInputWidget(Textarea):
 <input type="text" %(attrs)s>
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#%(id)s').tokenInput($.users, %(configuration)s);
+        $('#%(id)s').tokenInput($.users, {onAdd: function (item) { onAdd(item, $(this).prev().children().last().prev()); }, %(configuration)s});
     });
 </script>
 '''
@@ -55,7 +55,7 @@ class TokenInputWidget(Textarea):
             'id': final_attrs.get('id', '_'),
             'attrs': flatatt(final_attrs),
             'json_source': self.json_source,
-            'configuration': json.dumps(configuration)
+            'configuration': json.dumps(configuration)[1:-1]
         }
         return mark_safe(self.template % context)
 

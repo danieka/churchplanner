@@ -1,3 +1,7 @@
+<!--    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>    
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/ui/jquery.ui.datepicker-sv.js"></script>-->
+
 <script>
 $( document ).ready(function() {
     $.users = {{users|safe}}
@@ -57,8 +61,8 @@ $( document ).ready(function() {
            data: $("#event_form").serialize(), // serializes the form's elements.
            success: function(data)
            {
-               get_events();
                $("#data").load("/planner/event/{{type}}/form/" + data['pk'] + "/");
+               $("#documents").load("/fileuploader/" + data['pk'] +"/");
            }
          });
 
@@ -96,4 +100,18 @@ $( "#delete" ).button().click(function( event ) {
     });     
 });
 
+$(function() {
+    $(".token-input-list .token-input-token").each(function (index, e) {
+        if ($($($(e).children()).children()[0]).attr("status") == "null") {
+            $(e).append('<span><img src="/static/images/yellow_circle.png" height="16" width="16" style="margin-right:2px"></span>');
+            }
+        else if ($($($(e).children()).children()[0]).attr("status") == "true") {
+            $(e).append('<span><img src="/static/images/tick.png" height="16" width="16" style="margin-right:2px"></span>');
+            }
+    });
+});
+
+function onAdd(item, li) {
+    li.append('<span><img src="/static/images/yellow_circle.png" height="16" width="16" style="margin-right:2px"></span>');
+    }
 </script>

@@ -7,31 +7,14 @@ import datetime
 from django.core.signing import Signer
 from django.core.mail import send_mail
 from jquery_fields.fields import ModelMultipleChoiceTokenInputField
-from south.modelsinspector import add_introspection_rules
-
-add_introspection_rules([], ["^planner\.models\.ForeignKey"])
-add_introspection_rules([], ["^planner\.models\.ManyToManyField"])
-
-class ManyToManyField(models.ManyToManyField):
-
-    def formfield(self, **kwargs):
-        # This is a fairly standard way to set up some defaults
-        # while letting the caller override them.
-        defaults = {'form_class': ModelMultipleChoiceTokenInputField, "configuration": {}, "queryset": User.objects.all(), "json_source":'http://shell.loopj.com/tokeninput/tvshows.php'}
-        defaults.update(kwargs)
-        return super(ManyToManyField, self).formfield(**defaults)
-    
-class ForeignKey(models.ManyToManyField):
-
-    def formfield(self, **kwargs):
-        # This is a fairly standard way to set up some defaults
-        # while letting the caller override them.
-        defaults = {'form_class': ModelMultipleChoiceTokenInputField, "configuration": {'tokenLimit': 1}, "queryset": User.objects.all(), "json_source":'/planner/users/'}
-        defaults.update(kwargs)
-        return super(ForeignKey, self).formfield(**defaults)    
+from south.modelsinspector import add_introspection_rules  
+from wand.image import Image
+from django.core.files import File  
+import pdb
+from django.db.models.signals import post_save
+from django.dispatch import receiver
     
 # Create your models here.
-valid_events = ["Vardag", "Service"]
 page_id = 185831898118166 #Rossenspage id
 sender = "daniel.karlsson@roseniuskyrkan.se"
 signature = u"""
@@ -40,11 +23,20 @@ Daniel Karlsson
 
 PS. Detta mailet skickades ut automatiskt men det går jättebra att svara på det. Ditt mail kommer då till min vanliga adress. DS."""
 
-def generate_login_link(pk):
+message = u"""
+Hej Vänner,
+
+Här kommer en påminnelse om att du har en uppgift på %s enligt följande:
+    
+"""
+
+
+def generate_user_hash(pk):
     user = User.objects.get(pk=pk)
     signer = Signer()
     value = signer.sign(user.username)
-    return settings.SITE_ROOT + "/account/initialize/?user=" + str(user.pk) + "&hash=" + value.split(":")[1]
+    return value.split(":")[1]
+   #return settings.SITE_ROOT + "/account/initialize/?user=" + str(user.pk) + "&hash=" + value.split(":")[1]
 
 class Occurrence(models.Model):
     start_time = models.DateTimeField()
@@ -52,10 +44,46 @@ class Occurrence(models.Model):
     
     def __unicode__(self):
         return unicode(self.start_time.strftime("%d %b %H:%M"), "utf-8")
+
+class Role(models.Model):
+    name = models.CharField(max_length = 30)
+    
+    def __unicode__(self):
+        return self.name
         
+class EventType(models.Model):
+    name = models.CharField(max_length=50)
+    roles = models.ManyToManyField(Role)
+    initial_description = models.TextField(max_length = 4000)
+    image = models.ImageField(upload_to="images", null=True, blank = True)
     
+    def __unicode__(self):
+        return self.name
+   
+class Document(models.Model):
+    name = models.CharField(max_length=50, blank = True, null = True)
+    uploader = models.ForeignKey(settings.AUTH_USER_MODEL)
+    file_field = models.FileField(upload_to="files", null=True, blank=True)
+    thumbnail = models.ImageField(upload_to="files", null=True, blank=True)
+    
+    def __unicode__(self):
+        return self.file_field.name
+    
+
+@receiver(post_save, sender=Document)
+def generate_thumbnail(sender, **kwargs):
+    instance = kwargs['instance']
+    if instance.thumbnail == None:
+            with Image(filename = instance.file_field.path +"[0]") as img:
+                img.alpha_channel=False
+                with img.convert('jpeg') as converted:                    
+                    converted.resize(170, 150)
+                    converted.save(filename="tmp.jpg")
+                    instance.thumbnail.save(settings.MEDIA_URL + "files/thumbnails/" + instance.file_field.name.split(".")[-2] + ".jpg", File(open("tmp.jpg")))
+    
+       
+   
 class Event(models.Model):
-    
     event = models.ForeignKey(Occurrence, null = True, verbose_name="Tidpunkt")
     title = models.CharField(max_length=100, verbose_name="Titel")
     description = models.CharField(blank = True, null = True, max_length=4000, verbose_name="Beskrivning")
@@ -64,9 +92,9 @@ class Event(models.Model):
     internal_notes = models.CharField(blank = True, null = True, max_length=4000, verbose_name="Anteckningar")
     published = models.BooleanField(default = False)
     email_sent = models.BooleanField(default = False)
-    
-    class Meta:
-        abstract = True
+    participants = models.ManyToManyField(settings.AUTH_USER_MODEL, through = "Participation")
+    event_type = models.ForeignKey(EventType)
+    documents = models.ManyToManyField(Document, blank = True, null= True)
         
     def __unicode__(self):
         return self.title
@@ -86,83 +114,24 @@ class Event(models.Model):
     def delete(self, *args, **kwargs):
         self.event.delete()
         super(Event, self).delete(*args, **kwargs)
-
-class Vardag(Event):
-    organiser = ForeignKey(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="organiserVardag")
-    speaker = ForeignKey(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="speakerVardag")
-    food = ManyToManyField(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="food")
-    music = ManyToManyField(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="vardagmusic", verbose_name = u"Musiker/Lovsång")
-    
-    class Meta:
-        verbose_name = "VARDag"
-        
-    def send_reminder(self):
-        rlist = [self.organiser.email]
-        message = u"""
-Hej Vänner,
-
-Här kommer en påminnelse om att du har en uppgift på VARDag:
-    
-"""
-        for field in ["speaker", "food", "organ", "music"]:
-            user = eval("self.%s" % field)
-            if user:
-                rlist.append(user.email)
-                message +=  self._meta.get_field(field).verbose_name + ": " + user.first_name + " " + user.last_name + "\n"
-
-        send_mail(
-            subject = "VARDag " + self.event.start_time.date().strftime("%Y-%m-%d"),
-            from_email = sender,
-            recipient_list = set(rlist),
-            message = message+signature,
-            )   
-
-        self.email_sent = True
-        
-class Service(Event):
-    organiser = ForeignKey(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="organiserService", verbose_name="Ansvarig")
-    speaker = ForeignKey(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="speakerService", verbose_name = "Talare")
-    meeting_leader = ForeignKey(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="meeting_leader", verbose_name = u"Mötesledare")
-    host = ManyToManyField(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="host", verbose_name = u"Kyrkvärdar")
-    music = ManyToManyField(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="music", verbose_name = u"Musiker/Lovsång")
-    organ = ForeignKey(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="organ", verbose_name = "Organist")
-    bible_reader = ForeignKey(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="bible_reader", verbose_name = u"Bibelläsare")
-    personal_prayer = ManyToManyField(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="personal_prayer", verbose_name = u"Personlig förbön")
-    prayer = ForeignKey(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="prayer", verbose_name = u"Kyrkans förbön")
-    technician = ForeignKey(settings.AUTH_USER_MODEL, blank = True, null = True, related_name="technician", verbose_name = "Teknik")
-    
-    class Meta:
-        verbose_name = "Gudstjänst"
-        
-    def send_reminder(self):
-        rlist = [self.organiser.email]
-        message = u"""
-Hej Vänner,
-
-Här kommer en påminnelse om att du har en uppgift på söndagens gudtjänst enligt följande:
-    
-"""
-        for field in ["speaker", "meeting_leader", "organ", "bible_reader", "prayer"]:
-            user = eval("self.%s" % field)
-            if user:
-                rlist.append(user.email)
-                message +=  self._meta.get_field(field).verbose_name + ": " + user.first_name + " " + user.last_name + "\n"
-
-        for field in ['host', 'music', 'personal_prayer']:
-            users = eval("self.%s.all()" % field)
+       
+    def send_mail(self):
+        rlist = []
+        msg = message % (self.event_type.name)
+        for participant in self.participants.all():
+            rlist.append(participant.email)
+            role = Participation.objects.get(user= participant, event = self).role.name
+            msg += role +": " + participant.first_name + " " +participant.last_name + "\n"
+            msg += signature
+        if settings.SEND_REMINDER == True:
+            send_mail(
+                subject = self.event_type.name + self.event.start_time.date().strftime("%Y-%m-%d"),
+                from_email = sender,
+                recipient_list = set(rlist),
+                message = message+signature,
+                )
             
-            for user in users:
-                rlist.append(user.email)
-                message +=  self._meta.get_field(field).verbose_name + ": " + user.first_name + " " + user.last_name + "\n"
-
-        send_mail(
-            subject = "Gudtjänst " + self.event.start_time.date().strftime("%Y-%m-%d"),
-            from_email = sender,
-            recipient_list = set(rlist),
-            message = message+signature,
-            )
-        
-        self.email_sent = True
+            self.email_sent = True
     
 class Token(models.Model):
     token = models.CharField(max_length = 250)
@@ -172,3 +141,15 @@ class DefaultText(models.Model):
     linked_model = models.CharField(max_length = 50)
     message = models.TextField()
     
+class Participation(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    event = models.ForeignKey(Event)
+    attending = models.CharField(max_length=10, default="null")
+    role = models.ForeignKey(Role)
+    email_sent = models.BooleanField(default = False)
+    
+    def get_url(self):
+        signer = Signer()
+        value = signer.sign(self.pk)
+        return settings.SITE_ROOT + "/planner/participation/" + value.split(":")[1] + "/"
+        
