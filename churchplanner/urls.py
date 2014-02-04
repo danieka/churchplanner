@@ -27,6 +27,7 @@ urlpatterns = patterns('',
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {
         'document_root': settings.MEDIA_ROOT}),
     url( r"^fileuploader/(?P<pk>\d{1,6})/$", fileuploader),
+    (r'^pdf_viewer$', login_required(TemplateView.as_view(template_name='pdf_viewer.html'))),
 )
 
 
