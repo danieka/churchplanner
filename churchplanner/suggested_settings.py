@@ -13,20 +13,21 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os, sys
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-from celery.schedules import crontab
-import djcelery
-djcelery.setup_loader()
+#Uncomment if you have celery installed
+#from celery.schedules import crontab
+#import djcelery
+#djcelery.setup_loader()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ''
+SECRET_KEY = 'writesomethinghere'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-TEMPLATE_DEBUG = False
+TEMPLATE_DEBUG = True
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -48,12 +49,11 @@ INSTALLED_APPS = (
     'allaccess',
     'crispy_forms',
     "jquery_fields",
-    'south', #This is if you want migrations
-    'djcelery',
+    'south', 
+    #'djcelery', Uncomment if you have celery
 )
 
 MIDDLEWARE_CLASSES = (
-    #'ajaxerrors.middleware.ShowAJAXErrors',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -61,7 +61,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'planner.middleware.SecurityMiddleware',
-    #'django_facebook.middleware.FacebookCanvasMiddleWare',
 )
 
 ROOT_URLCONF = 'churchplanner.urls'
@@ -133,33 +132,36 @@ LOGIN_URL="/login"
 
 SITE_ROOT = ""
 
-EMAIL_HOST = "t"
+EMAIL_HOST = ""
 EMAIL_PORT = ""
 
+#Uncomment this whole section if you have celery installed.
 # The backend used to store task results - because we're going to be 
 # using RabbitMQ as a broker, this sends results back as AMQP messages
-CELERY_RESULT_BACKEND = "amqp"
-CELERY_IMPORTS = ("planner.tasks", )
-CELERY_ALWAYS_EAGER = True
+#CELERY_RESULT_BACKEND = "amqp"
+#CELERY_IMPORTS = ("planner.tasks", )
+#CELERY_ALWAYS_EAGER = True
 
-BROKER_HOST = "localhost"
-BROKER_PORT = 5672
-BROKER_PASSWORD = ""
-BROKER_USER = ""
-BROKER_VHOST = "o"
-BROKER_URL = ""
+#BROKER_HOST = "localhost"
+#BROKER_PORT = 5672
+#BROKER_PASSWORD = ""
+#BROKER_USER = ""
+#BROKER_VHOST = "o"
+#BROKER_URL = ""
 
 # The default Django db scheduler
-CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
-CELERYBEAT_SCHEDULE = {
-    "publish": {
-        "task": "planner.tasks.publish_task",
-        "schedule": crontab(hour=12, minute=30),
-        "args": (),
-    },
-    "send_email": {
-        "task": "planner.tasks.send_email_task",
-        "schedule": crontab(hour=12, minute=30),
-        "args": (),
-    },
-}
+#CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
+#CELERYBEAT_SCHEDULE = {
+#    "publish": {
+#        "task": "planner.tasks.publish_task",
+#        "schedule": crontab(hour=12, minute=30),
+#        "args": (),
+#    },
+#    "send_email": {
+#        "task": "planner.tasks.send_email_task",
+#        "schedule": crontab(hour=12, minute=30),
+#        "args": (),
+#    },
+
+SEND_REMINDER_EMAIL = False
+SEND_PARTICIPATION_EMAIL = False
