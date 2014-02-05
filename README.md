@@ -30,6 +30,10 @@ https://github.com/loopj/jquery-tokeninput
 
 Extract src and styles in static/jquery_fields/tokeninput
 
+Also you need to get pdf.js: https://github.com/mozilla/pdf.js/archive/gh-pages.zip
+
+Extract it in static/pdf.js
+
 Last you need to install RabbitMQ, or some other celery backend if you want tasks like facebook events and mailouts.
 
 To set up the database run:
