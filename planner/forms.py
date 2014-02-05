@@ -16,6 +16,7 @@ import datetime
 from jquery_fields.fields import ModelMultipleChoiceTokenInputField
 
 class EventForm(ModelForm):
+    """This is the form for all events."""
     start_date = DateField(label="Startdatum")
     start_time = TimeField(label="Starttid")
     end_time = TimeField(label="Sluttid", required=False)
@@ -26,9 +27,9 @@ class EventForm(ModelForm):
         super(EventForm, self).__init__(*args, **kwargs)
         self.fields['description'].widget = Textarea()
         self.fields['internal_notes'].widget = Textarea()
+        
         self.helper = FormHelper()
-        self.helper.form_id = "event_form"   
-           
+        self.helper.form_id = "event_form"              
         self.helper.layout = Layout(
             Column("title", "start_date", "start_time", "end_time"),
             Column("description", "internal_notes", css_id="left_div"),
@@ -39,17 +40,8 @@ class EventForm(ModelForm):
         )
             
         self.construct_fields()
-        
-        for fieldname in ['email_sent', 'published', 'event', 'participants', 'event_type']:
-            del self.fields[fieldname] # A crude way to exclude fields
                   
-        if not self.is_bound and self.instance.pk:           
-            start_time = self.instance.event.start_time.astimezone(pytz.timezone("Europe/Stockholm"))
-            self.fields['start_date'].initial = start_time.date().strftime("%Y-%m-%d")
-            self.fields['start_time'].initial = start_time.time().strftime("%X")
-            if self.instance.event.end_time:
-                self.fields['end_time'].initial = self.instance.event.end_time.time().strftime("%X")
-                
+        if not self.is_bound and self.instance.pk: #This mean we are modifying a existing event
             self.bind_fields()
             
         if not self.instance.pk:
@@ -81,6 +73,7 @@ class EventForm(ModelForm):
         return instance
     
     def construct_fields(self):
+        """Create form fields for the corresponding model fields."""
         for role in self.event_type.roles.all():
             field = ModelMultipleChoiceTokenInputField(queryset=User.objects.all(), required = False, json_source="/planner/users/", label=role.name, 
                     configuration = {}
@@ -89,14 +82,24 @@ class EventForm(ModelForm):
             self.helper.layout.fields[0].append(role.name.encode('ascii', 'ignore'))
             
     def bind_fields(self):
+        """Here we initialize the form from a existing event."""
+         #This part initializes the date and time.
+        start_time = self.instance.event.start_time.astimezone(pytz.timezone("Europe/Stockholm"))
+        self.fields['start_date'].initial = start_time.date().strftime("%Y-%m-%d")
+        self.fields['start_time'].initial = start_time.time().strftime("%X")
+        if self.instance.event.end_time:
+            self.fields['end_time'].initial = self.instance.event.end_time.time().strftime("%X")
+            
         for participant in self.instance.participants.all():
-            relations = participant.participation_set.filter(event = self.instance)
+            #iterate through all existing participants to initialize the form
+            relations = participant.participation_set.filter(event = self.instance) #Get the M2M-object
             for relation in relations:
                 self.fields[relation.role.name.encode('ascii', 'ignore')].initial[participant.pk] = None
         
         
     class Meta:
         model = Event
+        exclude = ['email_sent', 'published', 'event', 'participants', 'event_type']
         
 class DocumentForm(ModelForm):
     def __init__(self, *args, **kwargs):

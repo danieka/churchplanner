@@ -1,5 +1,7 @@
 body {
     font-size:85%;
+    margin-left:5%;
+    margin-right:5%;
 }
 #sidebar {
     clear:both;
@@ -17,7 +19,6 @@ h4 {
 }
 
 ul.label_selector{
-    list-style-type: none;
     margin-top:0;
     margin-left:-15px;
     
@@ -69,6 +70,7 @@ table, th, td, tr,{
 
 ul {
     display:inline-block;
+    list-style-type: none;
 }
 
 .ctrlHolder{
@@ -102,7 +104,7 @@ tr:nth-child(odd)              { background-color:#fff; }
 
 #tabs { width: 1000px; height: 150px; padding: 5px; overflow: auto;    clear: both;
    position: fixed;
-   bottom: 0px;}
+   bottom: 15px;}
 #resizable h3 { text-align: center; margin: 0; }
 
 .textinput .dateinput .timeinput {
@@ -169,4 +171,7 @@ tr:nth-child(odd)              { background-color:#fff; }
     display: inline;
     text-align:center;
     cursor: pointer;
+}
+
+#viewer{
 }

@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
-from planner.views import AssociateRedirect, AssociateCallback, LoginCallback, LoginRedirect, account_initialize, test, fileuploader
+from planner.views import AssociateRedirect, AssociateCallback, LoginCallback, LoginRedirect, account_initialize, test, fileuploader, viewer
 from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 from django.contrib.auth.views import login, logout_then_login, password_change
@@ -27,7 +27,8 @@ urlpatterns = patterns('',
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {
         'document_root': settings.MEDIA_ROOT}),
     url( r"^fileuploader/(?P<pk>\d{1,6})/$", fileuploader),
-    (r'^pdf_viewer$', login_required(TemplateView.as_view(template_name='pdf_viewer.html'))),
+    (r'^pdf_viewer/$', login_required(TemplateView.as_view(template_name='pdf_viewer.html'))),
+    (r'^viewer/(?P<pk>\d{1,6})/$',viewer),
 )
 
 

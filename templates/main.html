@@ -184,17 +184,17 @@ $(function () {
     
     $( "#tabs" ).resizable({
         minHeight: 150,
-        minWidth: $(window).width() - 30,
-        maxWidth: $(window).width() - 30,
+        minWidth: $(window).width()*0.7,
+        maxWidth: $(window).width()*0.7,
         handles: 'n',
     });
     
-    $( "#tabs" ).width($(window).width() - 30);
+    $( "#tabs" ).width($(window).width()*0.9-10);
     $( "#tabs" ).height($(window).height()*0.7);
     $("#tabs").tabs();
     
     $( window ).resize(function() {
-        $( "#tabs" ).width($(window).width() - 30);
+        $( "#tabs" ).width($(window).width()*0.9-10);
         $( "#tabs" ).height($(window).height()*0.7);
     });
     

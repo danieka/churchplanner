@@ -9,6 +9,7 @@ from django.template import RequestContext
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.utils.encoding import iri_to_uri
 
 from models import Token, Document
 from forms import *
@@ -25,25 +26,29 @@ from django.views.decorators.http import require_POST
 from tasks import *
 
 class AssociateRedirect(OAuthRedirect):
+    """This is the view that redirects to facebook when someone wants to link their
+    account with facebook."""
     @login_required
     def get_callback_url(self, provider):
         return reverse('associate-callback', kwargs={'provider': provider.name})
 
 
 class AssociateCallback(OAuthCallback):
+    """This is what happens when the user has authenticated with facebook."""
     def handle_new_user(self, provider, access, information):
         return redirect("/register/")
     
     @login_required
     def handle_existing_user(self, provider, user, access, info):
+        """Here we actually associate fb-account with the our local account."""
         if user != self.request.user:
             return self.handle_login_failure(provider, "Another user is associated with this account")
         # User was already associated with this account
         return super(AssociateCallback, self).handle_existing_user(provider, user, access, info)
 
-class LoginRedirect(OAuthRedirect):
-    
+class LoginRedirect(OAuthRedirect):    
     def get_additional_parameters(self, provider):
+        """We need to ask facebook for permissions to create events on the facebook page."""
         if provider.name == 'facebook':
             return {'scope': "create_event"}
         return super(AdditionalPermissionsRedirect, self).get_additional_parameters(provider)
@@ -53,6 +58,7 @@ class LoginRedirect(OAuthRedirect):
 
 class LoginCallback(OAuthCallback):
     def handle_existing_user(self, provider, user, access, info):
+        """Here we store the access token for the facebook page that we got from facebook."""
         if len(Token.objects.all()) < 5:
             fb = OpenFacebook(access.access_token.split("=")[1])
             me = fb.get('me/accounts')
@@ -61,13 +67,14 @@ class LoginCallback(OAuthCallback):
                     token = FacebookAuthorization.extend_access_token(page['access_token'])['access_token']
                 
             Token.objects.create(token = token)
-        
         return super(LoginCallback, self).handle_existing_user(provider, user, access, info)
-    def handle_new_user(self, provider, access, information):
+   
+   def handle_new_user(self, provider, access, information):
         return redirect("/register/")
 
 @login_required
-def get_events(request, events_to_get = 5):
+def get_events(request):
+    """This returns all events, or a subset of them. Parameters are passed in the GET request."""
     data = []
     events = []
     if 'eventtype' in request.GET:
@@ -84,6 +91,7 @@ def get_events(request, events_to_get = 5):
 
 @login_required
 def event_form(request, pk = None, eventtype = None):
+    """View for creating and modifying events."""
     #BUG: Ändringar i vilka butiker en notering gäller ändras inte
     title = None
     l = []
@@ -126,7 +134,8 @@ def event_form(request, pk = None, eventtype = None):
     return render_to_response('event_form.html', {'form': form, 'type': eventtype, 'pk':pk, 'title': title, 'users': users}, context_instance = RequestContext(request))
 
 @login_required
-def users(request):
+def get_users(request):
+    """Returns all users, this is used for typeahead in all forms."""
     l = []
     for user in User.objects.all():
         l.append({'id': user.pk, 'name': user.first_name + " " +  user.last_name})
@@ -140,6 +149,7 @@ def event_delete(request, pk, eventtype):
     return HttpResponse(response, content_type="application/json")
 
 def account_initialize(request):
+    """This view displays the choice between creating a local account or linking with facebook."""
     user = authenticate(hash=request.GET['hash'], pk = request.GET['user'])
     if not user or not user.is_active:
         response = json.dumps("Din länk är felaktig, så det finns inte så mycket vi kan göra just nu. Prata med Daniel så listar han ut vad som är fel.")
@@ -149,12 +159,14 @@ def account_initialize(request):
         return render(request, 'register.html')
     
 def test(request):
+    """This is just a function I use when I want to test a function."""
     resp = "a"
     send_email_participation()
     return HttpResponse(resp, content_type="application/json")
 
 @login_required
 def fileuploader(request, pk):
+    """This is the form that displays and uploads documents."""
     files = Event.objects.get(pk = pk).documents.all()
         
     if request.method == "POST":
@@ -166,6 +178,7 @@ def fileuploader(request, pk):
     return render_to_response('fileuploader.html', {'form': form, 'pk': pk, 'files': files}, context_instance = RequestContext(request))
 
 def participation_form(request, pk = None):
+    """This is the view that contributers see when they accept/decline participation."""
     if pk and request.method == "POST":
         participation = Participation.objects.get(pk = pk)
         if request.POST["accept"] == "true":
@@ -184,6 +197,11 @@ def participation_form(request, pk = None):
     events = []
     for event in unanswered:
         events.append({'name': event.event.title, 'date': event.event.event.start_time.isoformat(), 'role': event.role.name, 'pk': event.pk})
-    return render(request, 'participation_form.html', {'events': events})
+    return render(request, 'participation_form.html', {'events': events, 'pk': pk})
 
+@login_required
+def viewer(request, pk):
+    """The view for the fileviewer."""
+    documents = Event.objects.get(pk = pk).documents.all()
+    return render(request, 'viewer.html', {'documents': documents, 'initial': iri_to_uri(request.GET['file'])})
 

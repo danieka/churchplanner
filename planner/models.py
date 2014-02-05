@@ -36,7 +36,6 @@ def generate_user_hash(pk):
     signer = Signer()
     value = signer.sign(user.username)
     return value.split(":")[1]
-   #return settings.SITE_ROOT + "/account/initialize/?user=" + str(user.pk) + "&hash=" + value.split(":")[1]
 
 class Occurrence(models.Model):
     start_time = models.DateTimeField()
@@ -72,6 +71,7 @@ class Document(models.Model):
 
 @receiver(post_save, sender=Document)
 def generate_thumbnail(sender, **kwargs):
+    """This is called everytime a Document is saved and if the document doesn't have a thumbnail one is created."""
     instance = kwargs['instance']
     if instance.thumbnail == None:
             with Image(filename = instance.file_field.path +"[0]") as img:
@@ -136,20 +136,12 @@ class Event(models.Model):
 class Token(models.Model):
     token = models.CharField(max_length = 250)
     creation_date = models.DateField(auto_now_add=True)
-    
-class DefaultText(models.Model):
-    linked_model = models.CharField(max_length = 50)
-    message = models.TextField()
-    
+
 class Participation(models.Model):
+    """This is the relationsship model between Users and Events.
+    
+    We have this because we need to store the RSVP status of the user and what role the user should have."""
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     event = models.ForeignKey(Event)
     attending = models.CharField(max_length=10, default="null")
     role = models.ForeignKey(Role)
-    email_sent = models.BooleanField(default = False)
-    
-    def get_url(self):
-        signer = Signer()
-        value = signer.sign(self.pk)
-        return settings.SITE_ROOT + "/planner/participation/" + value.split(":")[1] + "/"
-        

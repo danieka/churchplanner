@@ -1,6 +1,6 @@
 <div style="margin-top:40px"/>
 {% for file in files %}
-    <div class="thumbnail" onclick="window.location='{{SITE_ROOT}}pdf_viewer?file={{MEDIA_URL}}{{file.file_field}}';">
+    <div class="thumbnail" onclick="window.location='{{SITE_ROOT}}viewer/{{pk}}/?file={{MEDIA_URL}}{{file.file_field}}';">
     <img src="{{MEDIA_URL}}{{file.thumbnail}}"/>
     <p>{{file.name}}  </p>
     </div>
