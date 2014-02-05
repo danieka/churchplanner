@@ -69,7 +69,7 @@ class LoginCallback(OAuthCallback):
             Token.objects.create(token = token)
         return super(LoginCallback, self).handle_existing_user(provider, user, access, info)
    
-   def handle_new_user(self, provider, access, information):
+    def handle_new_user(self, provider, access, information):
         return redirect("/register/")
 
 @login_required

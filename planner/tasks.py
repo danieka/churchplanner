@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 from celery.decorators import task
-from models import Event, generate_user_hash
+from models import Event, generate_user_hash, sender
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.template import loader, Context
@@ -40,7 +40,7 @@ def send_email_participation():
                 events.append({'date':participation.event.event.start_time.isoformat(), 'name': participation.event.title, 'role': participation.role.name})
             
         if len(events) != 0:
-            from_email = settings.DEFAULT_FROM_EMAIL           
+            from_email =sender           
             html = loader.get_template(template_html)
             c = Context({ 'events': events, 'name': user.first_name + " " + user.last_name, 'url':url })
             html_content = html.render(c)
