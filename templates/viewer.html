@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<div id="sidebar">
+<ul id="filelist">
+{% for document in documents %}
+<li value="{{MEDIA_URL}}{{document}}"> {{document.name}} </li>
+{% endfor %}
+</ul>
+</div>
+<iframe id="viewer" src="/pdf_viewer/?file={{initial}}">
+</iframe>
+
+<script>
+$( function() {
+    
+    $("#viewer").position({
+        of: $("#logo"),
+        my: "left top",
+        at: "right top",
+        })
+    .width($(window).width()*0.73)
+    .height($(window).height()*0.98);
+    $("#logo").css("margin-right", "30px");
+    
+     $( window ).resize(function() {
+        $( "#viewer").width($(window).width()*0.73)
+       .height($(window).height()*0.98);
+    });
+    
+ 
+});
+
+$("#filelist").click( function(e) {
+    val = $(e.target).attr("value");
+    console.log(val);
+    $("#viewer").attr("src", "/pdf_viewer/?file="+val);
+});
+</script>
+{% endblock %}
