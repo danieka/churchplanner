@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import csv, sys, os
 
-sys.path.append("/home/daniel/Code/churchplanner")
+sys.path.append("/home/daniel/Code/github/churchplanner/churchplanner/")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "churchplanner.settings")
 
 from django.contrib.auth.models import User

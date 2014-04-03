@@ -63,6 +63,7 @@ $( document ).ready(function() {
            {
                $("#data").load("/planner/event/{{type}}/form/" + data['pk'] + "/");
                $("#documents").load("/fileuploader/" + data['pk'] +"/");
+               get_events();
            }
          });
 

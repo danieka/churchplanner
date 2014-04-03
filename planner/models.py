@@ -21,7 +21,8 @@ signature = u"""
 Med Vänliga Hälsningar
 Daniel Karlsson
 
-PS. Detta mailet skickades ut automatiskt men det går jättebra att svara på det. Ditt mail kommer då till min vanliga adress. DS."""
+PS. Detta mailet skickades ut automatiskt med ett nytt system som vi håller på att pröva. 
+Det går jättebra att svara och ditt mail kommer då till min vanliga adress. DS."""
 
 message = u"""
 Hej Vänner,
@@ -145,3 +146,4 @@ class Participation(models.Model):
     event = models.ForeignKey(Event)
     attending = models.CharField(max_length=10, default="null")
     role = models.ForeignKey(Role)
+    email_sent = models.BooleanField(default = False)
