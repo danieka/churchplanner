@@ -23,8 +23,6 @@ class TokenInputWidget(Textarea):
         css = {
             'all': (
                 '/static/jquery_fields/tokeninput/styles/token-input.css',
-                '/static/jquery_fields/tokeninput/styles/token-input-facebook.css',
-                '/static/jquery_fields/tokeninput/styles/token-input-mac.css',
             ),
         }
         js = (
@@ -50,6 +48,7 @@ class TokenInputWidget(Textarea):
         if value is not None:
             configuration['prePopulate'].extend([{'id': v, 'name': label} for v, label in self.choices])
 
+        attrs['id'] = attrs['id'].replace(" ", "")
         final_attrs = self.build_attrs(attrs, name=name)
         context = {
             'id': final_attrs.get('id', '_'),
@@ -100,7 +99,7 @@ class BootstrapDateTimePicker(DateTimeInput):
             # Only add the 'value' attribute if a value is non-empty.
             final_attrs['value'] = force_unicode(self._format_value(value))
         context = {
-            'id': final_attrs.get('id', '_'),
+            'id': final_attrs.get('id', '_').replace(" ", ""),
             'attrs': flatatt(final_attrs),
             'configuration': json.dumps(self.configuration)
         }
