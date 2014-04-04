@@ -123,13 +123,16 @@ class Event(models.Model):
             rlist.append(participant.email)
             role = Participation.objects.get(user= participant, event = self).role.name
             msg += role +": " + participant.first_name + " " +participant.last_name + "\n"
-            msg += signature
+            
+        
+        msg += signature
+        print msg
         if settings.SEND_REMINDER == True:
             send_mail(
                 subject = self.event_type.name + self.event.start_time.date().strftime("%Y-%m-%d"),
                 from_email = sender,
                 recipient_list = set(rlist),
-                message = message+signature,
+                message = msg,
                 )
             
             self.email_sent = True
