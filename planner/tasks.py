@@ -17,12 +17,10 @@ def publish_task():
                 
 @task
 def send_email_task():
-    if not settings.SEND_REMINDER_EMAIL:
-        return
-    events = Event.objects.all()
-    for event in events:
-        if not event.email_sent and event.event.start_time.date() > (datetime.date.today() - datetime.timedelta(days=5)):
-            event.send_reminder()
+    if settings.SEND_REMINDER:
+        events = Event.objects.filter(event__start_time__range=[datetime.date.today(), datetime.date.today() + datetime.timedelta(days=5)])
+        for event in events:
+            event.send_mail()
             
 @task            
 def send_email_participation():

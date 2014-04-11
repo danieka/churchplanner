@@ -105,12 +105,7 @@ class Event(models.Model):
             token = Token.objects.all()[:1].get().token
             fb = OpenFacebook(token)
             print fb.set(str(page_id) + "/events", no_feed_story = "true", name=self.title, description = self.description, start_time = self.event.start_time.isoformat(), location_id=page_id, picture = "584610018240350")
-            self.published = True
-        
-    def save(self, *args, **kwargs):
-        super(Event, self).save(*args, **kwargs)
-        if self.facebook_publish and (self.publish_date == None or self.publish_date <= datetime.date.today()):
-            self.publish()        
+            self.published = True    
             
     def delete(self, *args, **kwargs):
         self.event.delete()
@@ -118,24 +113,36 @@ class Event(models.Model):
        
     def send_mail(self):
         rlist = []
+        roles = {}
         msg = message % (self.event_type.name)
+        
         for participant in self.participants.all():
             rlist.append(participant.email)
-            role = Participation.objects.get(user= participant, event = self).role.name
-            msg += role +": " + participant.first_name + " " +participant.last_name + "\n"
+            for participation in Participation.objects.filter(user= participant, event = self):
+                try:
+                    roles[participation.role.name] += participant.first_name + " " +participant.last_name +", "
+                except KeyError:
+                    roles[participation.role.name] = participant.first_name + " " +participant.last_name +", "
+           
+        for k in roles.keys():
+            msg += k +": " + roles[k][:-2] + "\n"
             
         
         msg += signature
-        print msg
-        if settings.SEND_REMINDER == True:
-            send_mail(
-                subject = self.event_type.name + self.event.start_time.date().strftime("%Y-%m-%d"),
-                from_email = sender,
-                recipient_list = set(rlist),
-                message = msg,
-                )
-            
-            self.email_sent = True
+        if settings.SEND_REMINDER == True and self.email_sent == False:
+            try:         
+                send_mail(
+                    subject = self.event_type.name + " " + self.event.start_time.date().strftime("%Y-%m-%d"),
+                    from_email = sender,
+                    recipient_list = set(rlist),
+                    message = msg,
+                    )
+                self.email_sent = True
+                
+            except:
+                self.email_sent = False
+                
+            self.save()
     
 class Token(models.Model):
     token = models.CharField(max_length = 250)

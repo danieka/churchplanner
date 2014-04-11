@@ -135,6 +135,7 @@ SITE_ROOT = ""
 EMAIL_HOST = ""
 EMAIL_PORT = ""
 
+
 #Uncomment this whole section if you have celery installed.
 # The backend used to store task results - because we're going to be 
 # using RabbitMQ as a broker, this sends results back as AMQP messages
