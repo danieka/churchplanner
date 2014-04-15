@@ -112,7 +112,7 @@ class Event(models.Model):
         super(Event, self).delete(*args, **kwargs)
        
     def send_mail(self):
-        rlist = []
+        rlist = [sender]
         roles = {}
         msg = message % (self.event_type.name)
         
