@@ -1,8 +1,9 @@
 body {
-    font-size:85%;
+    font-size:14px;
     margin-left:5%;
     margin-right:5%;
 }
+
 #sidebar {
     clear:both;
     float: left;
@@ -10,6 +11,7 @@ body {
     height: 30%;
     margin-top:10%:
 }
+
 h4 {
     margin-bottom:1%;
 }
@@ -34,30 +36,21 @@ li.label_selector{
 .ui-selecting { background: #EBEBEB; }
 .ui-selected { background: #EBEBEB;}
 
-#menu {
-    padding-top: 40px;
-    margin-left: 320px;
-}
-.new_event{
-    margin-left:-2em;
-    padding-left:-4em;
-    
+.menu {
+    float:left;
+    margin-top:1%;
 }
 
-#eventtable {
-    margin-left: 270px;
-    margin-top: 27px;
+.menu a {
+    margin-top:-22px;
 }
 
-
-.formColumn{
+.content {
     float:left;
 }
 
-#submit_div {
-    float:right;
-    margin-top:10px;
-    margin-right:45%;
+.new_event{
+    text-align: left;
 }
 
 table, th, td, tr,{
@@ -77,12 +70,6 @@ ul {
     margin-top:0.5em;
 }
 
-#div_id_internal_notes, #div_id_description{
-    margin-left: 5%;
-    float:left;
-    display: inline;
-}
-
 textarea {
     width:30em;
     height:20em;
@@ -94,61 +81,24 @@ textarea {
     display: inline-block;
     float: left;
     clear: left;
-    width: 160px;
+    width: 6em;
     margin-right:1em;
     text-align: right;
 }
 
 tr:nth-child(even)           { background-color:#eee; }
-tr:nth-child(odd)              { background-color:#fff; }
+tr:nth-child(odd)            { background-color:#fff; }
 
-#tabs { width: 1000px; height: 150px; padding: 5px; overflow: auto;    clear: both;
-   position: fixed;
-   bottom: 15px;}
-#resizable h3 { text-align: center; margin: 0; }
 
-.textinput .dateinput .timeinput {
-    overflow: hidden; 
-    height: auto !important; 
-    height: 1%;
-    width: 200px;
-    border: 1px solid #999;
-    cursor: text;
-    font-size: 12px;
-    font-family: Verdana;
-    z-index: 999;
-    margin: 0;
-    padding: 0;
-    background-color: #fff;
-    list-style-type: none;
-    clear: left;
-    border-radius:0px;
+.menu_container {
+    display: none; 
+    width:10.5em;
+    padding-top:1em;
 }
 
-
-#new_event_menu
-{
-    list-style-type: none;
-}
-
-/* handle on the right */
+/* This is the top handle of the resizable */
 .ui-resizable-n {
     height: 20px;
-}
-
-#left_div label{
-    clear: none;
-    float: none;
-    margin-left:auto;
-    margin-right:auto;
-    display: block;
-    width: auto;
-    display: auto;
-    text-align:center;
-}
-
-#left_div {
-    width: 80em;
 }
 
 .hover {
@@ -166,6 +116,18 @@ tr:nth-child(odd)              { background-color:#fff; }
     margin-top:2.5em;
 }
 
+#resizable {
+    padding: 5px; 
+    overflow: auto;    
+    clear: both;
+    position: fixed;
+    bottom: 15px;
+ }
+
+#tabs {
+    border: none;
+}
+
 .thumbnail{
     float: left;
     display: inline;
@@ -173,5 +135,53 @@ tr:nth-child(odd)              { background-color:#fff; }
     cursor: pointer;
 }
 
-#viewer{
+ul.token-input-list {
+    width: calc(60% + 13px)!important;
+}
+
+.formColumn input {
+    width: 60% !important;
+    overflow: hidden; 
+ 
+    height: 1%;
+    border: 1px solid #999;
+    cursor: text;
+    font-size: 12px;
+    font-family: Verdana, sans-serif;
+    z-index: 999;
+    margin: 0;
+    padding: 3px;
+    padding-left: 10px;
+    background-color: #fff;
+    list-style-type: none;
+    clear: left;
+}
+
+.formColumn{
+    float:left;
+    display:block;
+    overflow:auto;
+}
+
+#left_div {
+    width:22em;
+    padding-top: 1.1em;
+}
+
+#submit_div {
+    float:right;
+    margin-top:1em;
+    margin-right:45%;
+}
+
+#right_div {
+    width: 45em;
+}
+#right_div textarea {
+    width: 20em;
+}
+
+#right_div .ctrlHolder {
+    float:left;
+    margin-left: 2em;
 }

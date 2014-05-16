@@ -6,12 +6,11 @@
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
     <script type="text/javascript" src="http://malsup.github.io/min/jquery.form.min.js"></script>
     <script type="text/javascript" src="https://raw2.github.com/kayahr/jquery-fullscreen-plugin/master/jquery.fullscreen-min.js"></script>
+    <script type="text/javascript" src="/static/js/ui.js"></script>
 
     <link id="ui-theme" rel="stylesheet" href="/static/css/custom-theme/jquery-ui.css" />
-    <link id="ui-theme" rel="stylesheet" href="/static/css/rosenius/jquery-ui.css" />
     <link rel="stylesheet" href="/static/css/style.css" />
     
-    <link rel="stylesheet" href="/static/css/rosenius.css" />
     <title>{% block title %}Planering{% endblock %}</title>  
     
 <script>
@@ -22,16 +21,15 @@
     
     $( "a" ).button();
 });
-$(function() {
-$( document ).tooltip({show: {delay:1000}});
-});    
 </script>
 
 </head>
 <body>
-<div id="logo">
-</div>
-<div style="float:right">
+<img src="/static/images/logo.png" style="float:left;margin-right:1em;">
+{% block menu %}
+{% endblock %}
+<div class="menu" style="float:right">
+<a href="/logout"> Logga ut </a>
 <img src="/static/images/fullscreen.jpeg" height="30" onclick="$(document).fullScreen(true);">
 </div>
 <script>

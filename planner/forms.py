@@ -31,8 +31,8 @@ class EventForm(ModelForm):
         self.helper = FormHelper()
         self.helper.form_id = "event_form"              
         self.helper.layout = Layout(
-            Column("title", "start_date", "start_time", "end_time"),
-            Column("description", "internal_notes", css_id="left_div"),
+            Column("title", "start_date", "start_time", "end_time", css_id="left_div"),
+            Column("description", "internal_notes", css_id="right_div"),
             Div(
                 Submit('submit', 'Spara', css_id="submit"), 
                 Button('delete', 'Ta bort evenemang', css_id="delete"),

@@ -30,5 +30,3 @@ urlpatterns = patterns('',
     (r'^pdf_viewer/$', login_required(TemplateView.as_view(template_name='pdf_viewer.html'))),
     (r'^viewer/(?P<pk>\d{1,6})/$',viewer),
 )
-
-

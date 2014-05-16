@@ -8,12 +8,18 @@ from django.core.signing import Signer
 from django.core.mail import send_mail
 from jquery_fields.fields import ModelMultipleChoiceTokenInputField
 from south.modelsinspector import add_introspection_rules  
-from wand.image import Image
+
 from django.core.files import File  
 import pdb
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-    
+
+try:
+    #from wand.image import Image
+    wand_imported = False
+except:
+    wand_imported = False
+
 # Create your models here.
 page_id = 185831898118166 #Rossenspage id
 sender = "daniel.karlsson@roseniuskyrkan.se"
@@ -72,6 +78,8 @@ class Document(models.Model):
 
 @receiver(post_save, sender=Document)
 def generate_thumbnail(sender, **kwargs):
+    if not wand_imported:
+        return
     """This is called everytime a Document is saved and if the document doesn't have a thumbnail one is created."""
     instance = kwargs['instance']
     if instance.thumbnail == None:
