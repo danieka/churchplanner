@@ -144,7 +144,7 @@ def get_users(request):
 
 @login_required
 def event_delete(request, pk, eventtype):
-    eval("%s.objects.get(pk=pk).delete()" % eventtype)
+    Event.objects.get(pk=pk).delete()
     response = json.dumps("Success")
     return HttpResponse(response, content_type="application/json")
 
