@@ -19,7 +19,7 @@
         //event.preventDefault();
     });
     
-    $( "a" ).button();
+    $( "a_button" ).button();
 });
 </script>
 
@@ -29,13 +29,22 @@
 {% block menu %}
 {% endblock %}
 <div class="menu" style="float:right">
-<a href="/logout"> Logga ut </a>
+<div class="menu_launcher">
+   Administration
+   <div class="menu_container ui-widget-content">
+        <ul class="menu">
+            <li class="link"><a href="/administration/send_invitations/"> Skicka inloggningsnuppgifter </a></li>
+        </ul>
+    </div>
+</div>
+<a class="a_button" href="/logout"> Logga ut </a>
 <img src="/static/images/fullscreen.jpeg" height="30" onclick="$(document).fullScreen(true);">
 </div>
 <script>
  $.ajaxSetup ({
   cache: true
  });
+
 </script>
 {% block body %}
 {% endblock %}
