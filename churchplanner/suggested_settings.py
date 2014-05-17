@@ -130,10 +130,10 @@ CRISPY_TEMPLATE_PACK = "uni_form"
 LOGIN_REDIRECT_URL="/"
 LOGIN_URL="/login"
 
-SITE_ROOT = ""
+SITE_ROOT = "localhost:8000"
 
-EMAIL_HOST = ""
-EMAIL_PORT = ""
+EMAIL_HOST = "localhost"
+EMAIL_PORT = "1025"
 
 
 #Uncomment this whole section if you have celery installed.
@@ -166,3 +166,5 @@ EMAIL_PORT = ""
 
 SEND_REMINDER_EMAIL = False
 SEND_PARTICIPATION_EMAIL = False
+FACEBOOK_APP_ID = ""
+FACEBOOK_APP_SECRET =""

@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.utils.encoding import iri_to_uri
+from django.views.generic.edit import FormView
 
 from models import Token, Document
 from forms import *
@@ -25,20 +26,20 @@ from django.conf import settings
 from django.views.decorators.http import require_POST
 from tasks import *
 
+
 class AssociateRedirect(OAuthRedirect):
     """This is the view that redirects to facebook when someone wants to link their
     account with facebook."""
-    @login_required
     def get_callback_url(self, provider):
         return reverse('associate-callback', kwargs={'provider': provider.name})
 
 
 class AssociateCallback(OAuthCallback):
     """This is what happens when the user has authenticated with facebook."""
-    def handle_new_user(self, provider, access, information):
-        return redirect("/register/")
+
+    def get_or_create_user(self, provider, access, info):
+        return self.request.user
     
-    @login_required
     def handle_existing_user(self, provider, user, access, info):
         """Here we actually associate fb-account with the our local account."""
         if user != self.request.user:
@@ -204,4 +205,26 @@ def viewer(request, pk):
     """The view for the fileviewer."""
     documents = Event.objects.get(pk = pk).documents.all()
     return render(request, 'viewer.html', {'documents': documents, 'initial': iri_to_uri(request.GET['file'])})
+
+class SendInvitationsView(FormView):
+    template_name = 'send_invitations.html'
+    form_class = SendInvitationsForm
+    success_url = '/administration/send_invitations_confirmation/'
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        for user in form.cleaned_data["users"]:
+            user.send_login()
+        return super(FormView, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(FormView, self).get_context_data(**kwargs)
+        l = []
+        for user in User.objects.all():
+          l.append({'id': user.pk, 'name': user.first_name + " " +  user.last_name})
+        context["users"] = json.dumps(l, ensure_ascii=False)
+        return context
+
+
 

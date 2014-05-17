@@ -1,10 +1,11 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
-from planner.views import AssociateRedirect, AssociateCallback, LoginCallback, LoginRedirect, account_initialize, test, fileuploader, viewer
+from planner.views import *
 from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 from django.contrib.auth.views import login, logout_then_login, password_change
 from django.conf import settings
+from django.contrib.auth.forms import SetPasswordForm
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -21,7 +22,7 @@ urlpatterns = patterns('',
     (r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
     (r'^logout/$', logout_then_login),
     (r'^test/$', test),
-    (r'account/change_password/$', password_change),
+    (r'account/new_password/$', password_change, {'post_change_redirect': "/", 'password_change_form': SetPasswordForm}),
     (r'^account/initialize/$', account_initialize),
     (r'^$', login_required(TemplateView.as_view(template_name='main.html'))),
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {
@@ -29,4 +30,6 @@ urlpatterns = patterns('',
     url( r"^fileuploader/(?P<pk>\d{1,6})/$", fileuploader),
     (r'^pdf_viewer/$', login_required(TemplateView.as_view(template_name='pdf_viewer.html'))),
     (r'^viewer/(?P<pk>\d{1,6})/$',viewer),
-)
+    (r'^administration/send_invitations/$', SendInvitationsView.as_view()),
+    (r'^administration/send_invitations_confirmation/$', TemplateView.as_view(template_name="send_invitations_confirmation.html")),
+    )

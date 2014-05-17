@@ -74,7 +74,7 @@ class ModelMultipleChoiceTokenInputField(MultipleTokenInputFieldMixin, ModelMult
             obj = self.queryset.get(pk=obj)
             if hasattr(obj, "username"):
                 status = obj.participation_set.filter(event = self.event, user = obj)[0].attending
-                choices.append((super(ModelMultipleChoiceTokenInputField, self).prepare_value(obj), obj.first_name + " " + obj.last_name + '<object status="%s">' % (status)))
+                choices.append((super(ModelMultipleChoiceTokenInputField, self).prepare_value(obj), obj.first_name + " " + obj.last_name + ' <object status="%s">' % (status)))
             else:
                 choices.append((super(ModelMultipleChoiceTokenInputField, self).prepare_value(obj), self.label_from_instance(obj)))
         self.widget.choices = choices

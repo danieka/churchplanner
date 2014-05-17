@@ -41,16 +41,21 @@ li.label_selector{
     margin-top:1%;
 }
 
-.menu a {
-    margin-top:-22px;
-}
-
 .content {
     float:left;
 }
 
-.new_event{
+.menu_container li{
     text-align: left;
+    font-size: 14px;
+}
+
+.menu_container ul {
+    padding-left: 1.4em;
+}
+
+.menu_container a {
+    color: black !important;
 }
 
 table, th, td, tr,{
@@ -135,7 +140,7 @@ tr:nth-child(odd)            { background-color:#fff; }
     cursor: pointer;
 }
 
-ul.token-input-list {
+.formColumn ul.token-input-list {
     width: calc(60% + 13px)!important;
 }
 

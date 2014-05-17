@@ -6,7 +6,6 @@ class HashModelBackend(object):
         user = User.objects.get(pk=pk)
         signer = Signer()
         value = signer.sign(user.username)
-        print value, hash
         if value.split(":")[1] == hash:
             return user
         return None

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.utils.html import mark_safe
-from django.forms import ModelForm, SelectMultiple, ValidationError, DateInput, Textarea, DateField, TimeField
+from django.forms import ModelForm, SelectMultiple, ValidationError, DateInput, Textarea, DateField, TimeField, Form
 from models import Occurrence, Event, EventType, Participation, Role, Document
 from django.core.urlresolvers import reverse_lazy
 import pytz
@@ -118,8 +118,17 @@ class DocumentForm(ModelForm):
         return instance
     
     class Meta:
-        model = Document
-        
+        model = Document     
         fields = ["file_field", "name"]
         
         
+class SendInvitationsForm(Form):
+    users = ModelMultipleChoiceTokenInputField(queryset=User.objects.all(), 
+        required = False, 
+        json_source="/planner/users/", 
+        label="Användare som skall få inloggningsuppgifter", 
+        configuration = {}, 
+        initial = {})
+
+
+

@@ -1,10 +1,34 @@
-{% extends "base.html" %}
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>    
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="http://malsup.github.io/min/jquery.form.min.js"></script>
+    <script type="text/javascript" src="https://raw2.github.com/kayahr/jquery-fullscreen-plugin/master/jquery.fullscreen-min.js"></script>
+    <script type="text/javascript" src="/static/js/ui.js"></script>
 
-{% block body %}
+    <link id="ui-theme" rel="stylesheet" href="/static/css/custom-theme/jquery-ui.css" />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    
+    <title>{% block title %}Planering{% endblock %}</title>  
+    
+<script>
+ $(function() {
+    $( "button" ).button().click(function( event ) {
+        //event.preventDefault();
+    });
+    
+    $( ".a_button" ).button();
+});
+</script>
+
+</head>
+<body>
+<h2>Välkommen till Churchplanner</h2>
 <p>Du måste nu bestäma hur du ska logga in i framtiden. </p>
-<a href="/associate/facebook/"> Logga in med Facebook </a>
+<a class="a_button" href="/associate/facebook/"> Logga in med Facebook </a>
 <p style="margin-top:3em"> Om du inte har Facebook eller inte vill koppla det hit så kan du även logga in genom att skapa ett lösenord som du kan logga in med. </br>Ditt användarnamn när du loggar in är: {{ user.username }} </p>
-<form action="/account/change_password/" method = "post">
+<form action="/account/new_password/" method = "post">
 <div class="form-row">
     <label for="id_new_password1" class="required formLabel">Nytt lösenord:</label>
     <input class="formInput" id="id_new_password1" type="password" name="new_password1"></input>
@@ -27,4 +51,5 @@ $("#event_form").submit(function() {
                 form.attr('action'),
                 form.serializeArray());
         });
-{% endblock %}
+</script>
+</body>

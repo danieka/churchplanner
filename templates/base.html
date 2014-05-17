@@ -19,7 +19,7 @@
         //event.preventDefault();
     });
     
-    $( "a_button" ).button();
+    $( ".a_button" ).button();
 });
 </script>
 
@@ -29,23 +29,24 @@
 {% block menu %}
 {% endblock %}
 <div class="menu" style="float:right">
-<div class="menu_launcher">
+<div class="menu_launcher" style="margin-top: -22px;">
    Administration
    <div class="menu_container ui-widget-content">
         <ul class="menu">
-            <li class="link"><a href="/administration/send_invitations/"> Skicka inloggningsnuppgifter </a></li>
+            <li class="link"><a href="/administration/send_invitations/"> Skicka inloggning </a></li>
         </ul>
     </div>
 </div>
-<a class="a_button" href="/logout"> Logga ut </a>
+<a style="margin-top: -22px;" class="a_button" href="/logout"> Logga ut </a>
 <img src="/static/images/fullscreen.jpeg" height="30" onclick="$(document).fullScreen(true);">
 </div>
 <script>
  $.ajaxSetup ({
   cache: true
  });
-
+menus();
 </script>
+<div style="clear:both"></div>
 {% block body %}
 {% endblock %}
 </body>

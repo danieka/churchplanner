@@ -36,7 +36,23 @@ Hej Vänner,
 Här kommer en påminnelse om att du har en uppgift på %s enligt följande:
     
 """
+login = u"""
+Hej %s,
 
+Här kommer inloggningsuppgifter till Roseniuskyrkans planeringsverktyg.
+Vi använder planeringsverktyget för att planera in gudstjänster och andra evenemang och 
+vilka som ska medverka vid dessa evenemang. Genom att logga in så kan du se vilka evenemang
+som du är inplanerad på.
+
+För skapa inloggningsuppgifter så kan du klicka på länken nedan eller kopiera adressen till
+din webbläsares adressfönster. När du klickat kommer du få välja hur du vill logga in.
+
+Om du inte vet varför du detta mail så kan du svara direkt på detta mailet så reder vi ut det.
+
+Länken till planeringsverktyget:
+%s
+
+"""
 
 def generate_user_hash(pk):
     user = User.objects.get(pk=pk)
@@ -165,3 +181,20 @@ class Participation(models.Model):
     attending = models.CharField(max_length=10, default="null")
     role = models.ForeignKey(Role)
     email_sent = models.BooleanField(default = False)
+
+
+def send_login(self):
+    send_mail(
+        subject = "inloggningsuppgifter till Roseniuskyrkans planeringsverktyg",
+        from_email = sender,
+        recipient_list = (self.email, ),
+        message = login % (self.first_name, settings.SITE_ROOT + "/account/initialize/?user=" + str(self.pk) + "&hash=" + self.generate_hash())
+        )
+
+def generate_hash(self):
+    signer = Signer()
+    value = signer.sign(self.username)
+    return value.split(":")[1]
+
+User.add_to_class('send_login', send_login)
+User.add_to_class('generate_hash', generate_hash)
