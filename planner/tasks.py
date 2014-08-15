@@ -5,7 +5,7 @@ from models import Event, generate_user_hash, sender
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.template import loader, Context
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 
 @task
 def publish_task():
