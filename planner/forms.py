@@ -72,8 +72,13 @@ class EventForm(ModelForm):
                 checked_pk = []
 
                 for user in self.cleaned_data[role.name.encode('ascii', 'ignore')]:
+                    print user
                     if len(user.participation_set.filter(event = self.instance, role = role)) == 0:
                         Participation.objects.create(user = user, event = self.instance, attending = "null", role = role)
+
+                for participation in Participation.objects.filter(role=role, event = self.instance):
+                    if participation.user not in self.cleaned_data[role.name.encode('ascii', 'ignore')]:
+                        participation.delete()
                     
         return instance
     
@@ -82,7 +87,7 @@ class EventForm(ModelForm):
         for role in self.event_type.roles.all():
             field = ModelMultipleChoiceTokenInputField(queryset=User.objects.all(), widget=ParticipationTokenInputWidget, required = False, json_source="/planner/users/", label=role.name, 
                     configuration = {}
-                    , initial = {}, event = self.instance)
+                    , initial = {}, event = self.instance, role = role)
             self.fields[role.name.encode('ascii', 'ignore')] = field
             self.helper.layout.fields[0].append(role.name.encode('ascii', 'ignore'))
             

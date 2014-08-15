@@ -14,7 +14,7 @@ class TokenInputFieldMixin(object):
         if 'widget' not in kwargs or kwargs['widget'] is None:
             kwargs['widget'] = self.widget(json_source, configuration)
         else:
-            kwargs['widget'] = kwargs['widget'](json_source, configuration, event = kwargs.pop("event"))
+            kwargs['widget'] = kwargs['widget'](json_source, configuration, event = kwargs.pop("event"), role = kwargs.pop("role", None))
 
         super(TokenInputFieldMixin, self).__init__(choices, *args, **kwargs)
 

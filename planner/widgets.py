@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 class ParticipationTokenInputWidget(TokenInputWidget):
     def __init__(self, *args, **kwargs):
         self.event = kwargs.pop("event", None)
+        self.role = kwargs.pop("role", None)
         super(ParticipationTokenInputWidget, self).__init__(*args, **kwargs)
 
         self.template = u'''
@@ -36,9 +37,10 @@ class ParticipationTokenInputWidget(TokenInputWidget):
         	   configuration['prePopulate'].extend([{'id': v, 'name': label} for v, label in self.choices])
             else:
                 for v, label in self.choices:
-                    if User.objects.get(pk=v).participation_set.get(event=self.event).attending == "null":
+                    print self.role
+                    if User.objects.get(pk=v).participation_set.get(event=self.event, role=self.role).attending == "null":
                         status = "<img style='height:9px; margin-left:15px' src='/static/images/yellow_circle.png'>"
-                    if User.objects.get(pk=v).participation_set.get(event=self.event).attending == "true":
+                    if User.objects.get(pk=v).participation_set.get(event=self.event, role=self.role).attending == "true":
                         status = "<img style='height:9px; margin-left:15px' src='/static/images/tick.png'>"
                     configuration['prePopulate'].extend([{'id': v, 'name': label, 'status': status}])
 

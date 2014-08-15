@@ -44,8 +44,10 @@ def send_email_participation():
             c = Context({ 'events': events, 'name': user.first_name + " " + user.last_name, 'url':url })
             html_content = html.render(c)
 
-            msg = send_mail(subject,html_content, from_email, [to])
-            
+            msg = EmailMessage(subject,html_content, from_email, [to])
+            msg.content_subtype = "html"
+            msg.send()
+
             for participation in user.participation_set.filter(event__event__start_time__gte=datetime.datetime.now(), email_sent = False):
                 participation.email_sent = True
                 participation.save()

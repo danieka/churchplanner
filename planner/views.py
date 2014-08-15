@@ -103,7 +103,7 @@ def event_form(request, pk = None, eventtype = None):
             eventtype = urllib.unquote(eventtype.encode('ascii')).decode('utf-8')
         except:
             pass
-    print eventtype
+
     title = None
     l = []
     for user in User.objects.all():
