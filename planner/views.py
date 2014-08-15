@@ -194,9 +194,9 @@ def participation_form(request, pk = None):
     else:
         user = request.user
         
-    unanswered = user.participation_set.filter(attending="null")
+    upcoming = user.participation_set.filter(event__start_time__gte=datetime.datetime.now())
     events = []
-    for event in unanswered:
+    for event in upcoming:
         events.append({'name': event.event.title, 'date': event.event.event.start_time.isoformat(), 'role': event.role.name, 'pk': event.pk})
     return render(request, 'participation_form.html', {'events': events, 'pk': pk})
 

@@ -28,7 +28,7 @@ Med Vänliga Hälsningar
 Daniel Karlsson
 
 PS. Detta mailet skickades ut automatiskt med ett nytt system som vi håller på att pröva. 
-Det går jättebra att svara och ditt mail kommer då till min vanliga adress. DS."""
+Det går jättebra att svara som vanligt och ditt mail kommer då till min vanliga adress. DS."""
 
 message = u"""
 Hej Vänner,

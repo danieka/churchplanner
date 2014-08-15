@@ -2,6 +2,7 @@
 from django.forms import ModelMultipleChoiceField, MultipleChoiceField, ChoiceField, ModelChoiceField
 from jquery_fields.widgets import TokenInputWidget
 
+
 class TokenInputFieldMixin(object):
     widget = TokenInputWidget
     configuration = {'tokenLimit': 1}
@@ -12,6 +13,9 @@ class TokenInputFieldMixin(object):
         configuration.update(self.configuration)
         if 'widget' not in kwargs or kwargs['widget'] is None:
             kwargs['widget'] = self.widget(json_source, configuration)
+        else:
+            kwargs['widget'] = kwargs['widget'](json_source, configuration, event = kwargs.pop("event"))
+
         super(TokenInputFieldMixin, self).__init__(choices, *args, **kwargs)
 
 
@@ -64,18 +68,12 @@ class ModelMultipleChoiceTokenInputField(MultipleTokenInputFieldMixin, ModelMult
     choices = []    # choices are always equal to field value, look into 'prepare_value' implementation
 
     def __init__(self, queryset, json_source, *args, **kwargs):
-        self.event = kwargs.pop('event', None)
         super(ModelMultipleChoiceTokenInputField, self).__init__(queryset, json_source, *args, **kwargs)
 
     def prepare_value(self, value):
         # setup widget choices to current field value
         choices = []
-        for obj in self.clean(value): 
-            obj = self.queryset.get(pk=obj)
-            if hasattr(obj, "username"):
-                status = obj.participation_set.filter(event = self.event, user = obj)[0].attending
-                choices.append((super(ModelMultipleChoiceTokenInputField, self).prepare_value(obj), obj.first_name + " " + obj.last_name + ' <object status="%s">' % (status)))
-            else:
-                choices.append((super(ModelMultipleChoiceTokenInputField, self).prepare_value(obj), self.label_from_instance(obj)))
+        for obj in self.clean(value):
+            choices.append((super(ModelMultipleChoiceTokenInputField, self).prepare_value(obj), obj.first_name + " " + obj.last_name))
         self.widget.choices = choices
         return super(ModelMultipleChoiceTokenInputField, self).prepare_value(value)

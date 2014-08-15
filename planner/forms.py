@@ -14,6 +14,7 @@ from django.core.files import File
 import json
 import datetime
 from jquery_fields.fields import ModelMultipleChoiceTokenInputField
+from widgets import ParticipationTokenInputWidget
 
 class EventForm(ModelForm):
     """This is the form for all events."""
@@ -75,9 +76,9 @@ class EventForm(ModelForm):
     def construct_fields(self):
         """Create form fields for the corresponding model fields."""
         for role in self.event_type.roles.all():
-            field = ModelMultipleChoiceTokenInputField(queryset=User.objects.all(), required = False, json_source="/planner/users/", label=role.name, 
+            field = ModelMultipleChoiceTokenInputField(queryset=User.objects.all(), widget=ParticipationTokenInputWidget, required = False, json_source="/planner/users/", label=role.name, 
                     configuration = {}
-                    , initial = {}, event=self.instance)
+                    , initial = {}, event = self.instance)
             self.fields[role.name.encode('ascii', 'ignore')] = field
             self.helper.layout.fields[0].append(role.name.encode('ascii', 'ignore'))
             
@@ -94,7 +95,7 @@ class EventForm(ModelForm):
             #iterate through all existing participants to initialize the form
             relations = participant.participation_set.filter(event = self.instance) #Get the M2M-object
             for relation in relations:
-                self.fields[relation.role.name.encode('ascii', 'ignore')].initial[participant.pk] = None
+                self.fields[relation.role.name.encode('ascii', 'ignore')].initial[participant] = None
         
         
     class Meta:
