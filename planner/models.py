@@ -51,9 +51,6 @@ Om du inte vet varför du detta mail så kan du svara direkt på detta mailet s�
 
 Länken till planeringsverktyget:
 %s
-\n
-
-
 """
 
 def generate_user_hash(pk):
@@ -190,7 +187,7 @@ def send_login(self):
         subject = "inloggningsuppgifter till Roseniuskyrkans planeringsverktyg",
         from_email = sender,
         recipient_list = (self.email, ),
-        message = login % (self.first_name, settings.SITE_ROOT + "/account/initialize/?user=" + str(self.pk) + "&hash=" + self.generate_hash() + signature)
+        message = login % (self.first_name, settings.SITE_ROOT + "/account/initialize/?user=" + str(self.pk) + "&hash=" + self.generate_hash() + "\n\n" + signature)
         )
 
 def generate_hash(self):
