@@ -188,7 +188,7 @@ def send_login(self):
         subject = "inloggningsuppgifter till Roseniuskyrkans planeringsverktyg",
         from_email = sender,
         recipient_list = (self.email, ),
-        message = login % (self.first_name, settings.SITE_ROOT + "/account/initialize/?user=" + str(self.pk) + "&hash=" + self.generate_hash())
+        message = login % (self.first_name, settings.SITE_ROOT + "/account/initialize/?user=" + str(self.pk) + "&hash=" + self.generate_hash() + signature)
         )
 
 def generate_hash(self):
