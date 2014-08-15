@@ -52,6 +52,8 @@ Om du inte vet varför du detta mail så kan du svara direkt på detta mailet s�
 Länken till planeringsverktyget:
 %s
 \n
+
+
 """
 
 def generate_user_hash(pk):
