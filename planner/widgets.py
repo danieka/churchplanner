@@ -28,7 +28,6 @@ class ParticipationTokenInputWidget(TokenInputWidget):
     def render(self, name, value, attrs=None):
         configuration =  copy(self.configuration)
 
-        print attrs
         if 'prePopulate' not in configuration:
             configuration['prePopulate'] = []
 
@@ -43,7 +42,6 @@ class ParticipationTokenInputWidget(TokenInputWidget):
                         status = "<img style='height:9px; margin-left:15px' src='/static/images/tick.png'>"
                     configuration['prePopulate'].extend([{'id': v, 'name': label, 'status': status}])
 
-        print configuration
 
         attrs['id'] = attrs['id'].replace(" ", "")
         final_attrs = self.build_attrs(attrs, name=name)
@@ -54,6 +52,4 @@ class ParticipationTokenInputWidget(TokenInputWidget):
             'configuration': json.dumps(configuration)[1:-1],
             'event': self.event,
         }
-
-        print mark_safe(self.template % context)
         return mark_safe(self.template % context)

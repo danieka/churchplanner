@@ -50,6 +50,7 @@ class EventForm(ModelForm):
             
     def save(self, commit=True):
         instance = super(EventForm, self).save(commit=False)
+        print self.instance.participants.all()
         if not hasattr(self.instance, "event_type"):
             self.instance.event_type = self.event_type
         start_time= datetime.datetime.combine(self.cleaned_data['start_date'], self.cleaned_data['start_time'])
@@ -59,17 +60,22 @@ class EventForm(ModelForm):
         if self.cleaned_data['end_time'] != None:
             end_time = tz.localize(datetime.datetime.combine(self.cleaned_data['start_date'], self.cleaned_data['end_time']))
         
+
         if instance.event:
             instance.event.delete()
         instance.event =  Occurrence.objects.create(start_time = tz.localize(start_time), end_time=end_time)
 
+        print "iii", self.instance.participants.all()
         if commit:
+
             instance.save()
             
             for role in self.event_type.roles.all():
                 checked_pk = []
+
                 for user in self.cleaned_data[role.name.encode('ascii', 'ignore')]:
-                    Participation.objects.create(user = user, event = self.instance, attending = "null", role = role)
+                    if len(user.participation_set.filter(event = self.instance, role = role)) == 0:
+                        Participation.objects.create(user = user, event = self.instance, attending = "null", role = role)
                     
         return instance
     

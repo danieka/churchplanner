@@ -109,7 +109,7 @@ def generate_thumbnail(sender, **kwargs):
        
    
 class Event(models.Model):
-    event = models.ForeignKey(Occurrence, null = True, verbose_name="Tidpunkt")
+    event = models.ForeignKey(Occurrence, null = True, verbose_name="Tidpunkt", on_delete=models.SET_NULL)
     title = models.CharField(max_length=100, verbose_name="Titel")
     description = models.CharField(blank = True, null = True, max_length=4000, verbose_name="Beskrivning")
     facebook_publish = models.BooleanField(default = False, verbose_name="Facebook")
