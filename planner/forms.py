@@ -50,7 +50,6 @@ class EventForm(ModelForm):
             
     def save(self, commit=True):
         instance = super(EventForm, self).save(commit=False)
-        print self.instance.participants.all()
         if not hasattr(self.instance, "event_type"):
             self.instance.event_type = self.event_type
         start_time= datetime.datetime.combine(self.cleaned_data['start_date'], self.cleaned_data['start_time'])
@@ -65,7 +64,6 @@ class EventForm(ModelForm):
             instance.event.delete()
         instance.event =  Occurrence.objects.create(start_time = tz.localize(start_time), end_time=end_time)
 
-        print "iii", self.instance.participants.all()
         if commit:
 
             instance.save()

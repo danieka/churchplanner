@@ -3,6 +3,7 @@ import json
 import datetime
 import calendar
 import operator
+import urllib
 
 from django.shortcuts import render_to_response, redirect, render
 from django.template import RequestContext
@@ -25,7 +26,8 @@ import os, StringIO
 from django.conf import settings
 from django.views.decorators.http import require_POST
 import tasks
-import mailchimp
+from mailsnake import MailSnake
+from mailsnake.exceptions import *
 
 
 
@@ -96,6 +98,12 @@ def get_events(request):
 def event_form(request, pk = None, eventtype = None):
     """View for creating and modifying events."""
     #BUG: Ändringar i vilka butiker en notering gäller ändras inte
+    if eventtype != None:
+        try:
+            eventtype = urllib.unquote(eventtype.encode('ascii')).decode('utf-8')
+        except:
+            pass
+    print eventtype
     title = None
     l = []
     for user in User.objects.all():
@@ -231,12 +239,9 @@ class SendInvitationsView(FormView):
 def get_mailchimp_users(request):
     list_id = "63c4d992d8"
     try:
-        m = mailchimp.Mailchimp('c1ef033d26e799af744c00edc821634b-us8')
-        lists = m.lists.list({'list_id':list_id})
-        print lists
-        l = lists['data'][0]
-        print m.lists.members(list_id)
-        members = m.lists.members(list_id)['data']
+        m = MailSnake('c1ef033d26e799af744c00edc821634b-us8', api='export')
+        members = m.list(id=list_id)
+        print len(members)
     
     # except mailchimp.ListDoesNotExistError:
     #     messages.error(request, "The list does not exist")
@@ -247,11 +252,11 @@ def get_mailchimp_users(request):
         return redirect('/')
     
     new_users = 0
-    for member in members:
-        if len(User.objects.filter(email = member['email'])) == 0 and len(User.objects.filter(username = member['merges']['FNAME'] + "." + member['merges']['LNAME'])) == 0:
-            new_user = User.objects.create_user(username=member['merges']['FNAME'] + "." + member['merges']['LNAME'], email=member['email'])
-            new_user.first_name = member['merges']['FNAME']
-            new_user.last_name = member['merges']['LNAME']
+    for member in members[1:]:
+        if len(User.objects.filter(email = member[0])) == 0 and len(User.objects.filter(username = member[1] + "." + member[2])) == 0:
+            new_user = User.objects.create_user(username=member[1] + "." + member[2], email=member[0])
+            new_user.first_name = member[1]
+            new_user.last_name = member[2]
             new_user.save()
             new_users += 1
 

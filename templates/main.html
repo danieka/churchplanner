@@ -134,7 +134,7 @@ $(function () {
     menus();
 
     $(".new_event").click(function(e) {
-        $("#data").load(escape("/planner/event/" + $(this).attr("value") + "/form/")); 
+        $("#data").load(escape("/planner/event/" + encodeURI($(this).attr("value")) + "/form/")); 
     });   
 });
 </script>
