@@ -8,22 +8,37 @@
 <th>Uppgift</th>
 </tr>
 {% for event in events %}
-<tr><td>{{event.name}}</td><td>{{event.date}}</td><td>{{event.role}}</td> 
-<td>
+<tr><td>{{event.name}}</td><td>{{event.date|date:"d M Y H:i"}}</td><td>{{event.role}}</td> 
+<td class="td-button">
 <form action="/planner/participation/{{event.pk}}/" method="post">
-<a onclick="$(this).parent().submit();">Kan medverka</a>
+<a id="{{event.pk}}-true" class="a_button" onclick="$(this).parent().submit();$('#{{event.pk}}-false').addClass('inactive');$('#{{event.pk}}-true').removeClass('inactive');">Kan medverka</a>
 {% csrf_token %}
-<input type="hidden" name="accept" value="True">
+<input type="hidden" name="accept" value="true">
 </form>
 </td>
-<td>
+<td class="td-button">
 <form action="/planner/participation/{{event.pk}}/" method="post">
-<a onclick="$(this).parent().submit();">Kan inte medverka</a>
+<a id="{{event.pk}}-false" class="a_button" style: onclick="$(this).parent().submit();$('#{{event.pk}}-true').addClass('inactive');$('#{{event.pk}}-false').removeClass('inactive');">Kan inte medverka</a>
 {% csrf_token %}
-<input type="hidden" name="accept" value="False">
+<input type="hidden" name="accept" value="false">
 </form>
 </td>
 </tr>
+<script>
+$(function () { 
+  if ({{event.attending}} == true){
+    console.log("hereaa");
+    $("#{{event.pk}}-false").addClass("inactive");
+  }
+  if ({{event.attending}} == false){
+    $("#{{event.pk}}-true").addClass("inactive");
+  }
+  if ({{event.attending}} == null){
+    $("#{{event.pk}}-true").addClass("inactive");
+    $("#{{event.pk}}-false").addClass("inactive");
+  }
+});
+</script>
 {% endfor %}
 </table>
 

@@ -94,6 +94,10 @@ textarea {
 tr:nth-child(even)           { background-color:#eee; }
 tr:nth-child(odd)            { background-color:#fff; }
 
+.td-button{
+    background-color:#fff;
+    margin-left: 0.5em;
+}
 
 .menu_container {
     display: none; 
@@ -189,4 +193,10 @@ tr:nth-child(odd)            { background-color:#fff; }
 #right_div .ctrlHolder {
     float:left;
     margin-left: 2em;
+}
+
+.inactive { 
+    background-color: #FFF !important; 
+    color: #000 !important;
+    background-image: none !important;
 }

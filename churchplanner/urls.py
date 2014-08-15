@@ -6,6 +6,7 @@ from django.contrib import admin
 from django.contrib.auth.views import login, logout_then_login, password_change
 from django.conf import settings
 from django.contrib.auth.forms import SetPasswordForm
+import planner.tasks
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -33,4 +34,5 @@ urlpatterns = patterns('',
     (r'^administration/send_invitations/$', SendInvitationsView.as_view()),
     (r'^administration/send_invitations_confirmation/$', TemplateView.as_view(template_name="send_invitations_confirmation.html")),
     (r'^administration/get_mailchimp_users/$', get_mailchimp_users),
+    (r'^administration/send_email_participation/$', send_email_participation)
     )

@@ -29,13 +29,14 @@ def send_email_participation():
     template_html = 'participation_request.html'
     users = User.objects.all()
     subject = "Kan du hjälpa till?"
-    events = []
+    
     for user in users:
+        events = []
         to = user.email
         url = settings.SITE_ROOT + "/planner/participation/?user=" + str(user.pk) + "&hash=" + generate_user_hash(user.pk)
-        for participation in user.participation_set.all():
-            if not participation.email_sent:
-                events.append({'date':participation.event.event.start_time.isoformat(), 'name': participation.event.title, 'role': participation.role.name})
+        print (user, user.participation_set.all())
+        for participation in user.participation_set.filter(event__event__start_time__gte=datetime.datetime.now(), email_sent = False):
+            events.append({'date':participation.event.event.start_time, 'type': participation.event.event_type.name, 'role': participation.role.name})
             
         if len(events) != 0:
             from_email =sender           
@@ -45,6 +46,6 @@ def send_email_participation():
 
             msg = send_mail(subject,html_content, from_email, [to])
             
-        for participation in user.participation_set.all():
-            if not participation.email_sent:
+            for participation in user.participation_set.filter(event__event__start_time__gte=datetime.datetime.now(), email_sent = False):
                 participation.email_sent = True
+                participation.save()

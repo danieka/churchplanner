@@ -24,7 +24,7 @@ from itertools import chain
 import os, StringIO
 from django.conf import settings
 from django.views.decorators.http import require_POST
-from tasks import *
+import tasks
 import mailchimp
 
 
@@ -164,7 +164,6 @@ def account_initialize(request):
 def test(request):
     """This is just a function I use when I want to test a function."""
     resp = "a"
-    send_email_participation()
     return HttpResponse(resp, content_type="application/json")
 
 @login_required
@@ -189,6 +188,7 @@ def participation_form(request, pk = None):
         elif request.POST["accept"] == "false":
             participation.attending = "false"
         participation.save()
+        participation.attending
             
 
     if not request.user:
@@ -196,10 +196,10 @@ def participation_form(request, pk = None):
     else:
         user = request.user
         
-    upcoming = user.participation_set.filter(event__start_time__gte=datetime.datetime.now())
+    upcoming = user.participation_set.filter(event__event__start_time__gte=datetime.datetime.now())
     events = []
     for event in upcoming:
-        events.append({'name': event.event.title, 'date': event.event.event.start_time.isoformat(), 'role': event.role.name, 'pk': event.pk})
+        events.append({'name': event.event.title, 'date': event.event.event.start_time, 'role': event.role.name, 'pk': event.pk, 'attending': event.attending})
     return render(request, 'participation_form.html', {'events': events, 'pk': pk})
 
 @login_required
@@ -257,4 +257,6 @@ def get_mailchimp_users(request):
 
     return render_to_response('get_mailchimp_users.html', {'new_users': new_users}, context_instance=RequestContext(request))
 
-
+def send_email_participation(request):
+    tasks.send_email_participation()
+    return HttpResponse("Email successfully sent", content_type="application/json")

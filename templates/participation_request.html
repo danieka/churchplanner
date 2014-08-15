@@ -1,9 +1,16 @@
 Hej {{name}}!
 
 Vi undrar om du kan hjälpa till på följande datum:
+<table>
+<tr>
+<th>Evenemang</th>
+<th>Datum</th>
+<th>Uppgift</th>
+</tr>
 {% for event in events %}
-{{event.name}} {{event.date}} {{event.role}}
+<tr><td>{{event.type}}</td><td> {{event.date|date:"d M Y H:i"}}</td><td>{{event.role}}</td></tr>
 {% endfor %}
+</table>
 
 För att svara så klickar du på länken nedan och fyller i när du kan.
 <a href="{{ url|safe }}"> {{url|safe}} </a>
