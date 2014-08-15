@@ -25,6 +25,8 @@ import os, StringIO
 from django.conf import settings
 from django.views.decorators.http import require_POST
 from tasks import *
+import mailchimp
+
 
 
 class AssociateRedirect(OAuthRedirect):
@@ -153,7 +155,7 @@ def account_initialize(request):
     """This view displays the choice between creating a local account or linking with facebook."""
     user = authenticate(hash=request.GET['hash'], pk = request.GET['user'])
     if not user or not user.is_active:
-        response = json.dumps("Din länk är felaktig, så det finns inte så mycket vi kan göra just nu. Prata med Daniel så listar han ut vad som är fel.")
+        response = json.dumps("Din länk är felaktig, så det finns inte så mycket vi kan göra just nu. Prata med Daniel K så listar han ut vad som är fel.")
         return HttpResponse(response, content_type="application/json")
     else:
         login(request, user)
@@ -226,5 +228,33 @@ class SendInvitationsView(FormView):
         context["users"] = json.dumps(l, ensure_ascii=False)
         return context
 
+def get_mailchimp_users(request):
+    list_id = "63c4d992d8"
+    try:
+        m = mailchimp.Mailchimp('c1ef033d26e799af744c00edc821634b-us8')
+        lists = m.lists.list({'list_id':list_id})
+        print lists
+        l = lists['data'][0]
+        print m.lists.members(list_id)
+        members = m.lists.members(list_id)['data']
+    
+    # except mailchimp.ListDoesNotExistError:
+    #     messages.error(request, "The list does not exist")
+    #     return redirect('/')
+    
+    except mailchimp.Error, e:
+        print(request, 'An error occurred: %s - %s' % (e.__class__, e))
+        return redirect('/')
+    
+    new_users = 0
+    for member in members:
+        if len(User.objects.filter(email = member['email'])) == 0 and len(User.objects.filter(username = member['merges']['FNAME'] + "." + member['merges']['LNAME'])) == 0:
+            new_user = User.objects.create_user(username=member['merges']['FNAME'] + "." + member['merges']['LNAME'], email=member['email'])
+            new_user.first_name = member['merges']['FNAME']
+            new_user.last_name = member['merges']['LNAME']
+            new_user.save()
+            new_users += 1
+
+    return render_to_response('get_mailchimp_users.html', {'new_users': new_users}, context_instance=RequestContext(request))
 
 

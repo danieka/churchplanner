@@ -32,4 +32,5 @@ urlpatterns = patterns('',
     (r'^viewer/(?P<pk>\d{1,6})/$',viewer),
     (r'^administration/send_invitations/$', SendInvitationsView.as_view()),
     (r'^administration/send_invitations_confirmation/$', TemplateView.as_view(template_name="send_invitations_confirmation.html")),
+    (r'^administration/get_mailchimp_users/$', get_mailchimp_users),
     )
