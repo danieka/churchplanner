@@ -1,0 +1,54 @@
+{% extends "mobile/base.html" %}
+
+{% block content %}
+
+<div id="main" data-title="Roseniuskyrkan" class="panel" selected="true">
+<ul class="list">
+
+{% for event in events %}
+<li><center>{{event.role}} {{event.type}} {{event.date|date:"d M Y H:i"}}</center><br> 
+
+<form style="float:left;margin-right:2em;margin-left:1em" action="/planner/participation/{{event.pk}}/" method="post">
+  <a id="{{event.pk}}-true" class="button" onclick="$(this).parent().submit();$('#{{event.pk}}-true').addClass('blue');$('#{{event.pk}}-false').removeClass('blue');">Kan medverka</a>
+  {% csrf_token %}
+  <input type="hidden" name="accept" value="true">
+</form>
+
+
+<form  action="/planner/participation/{{event.pk}}/" method="post">
+  <a id="{{event.pk}}-false" class="button" style: onclick="$(this).parent().submit();$('#{{event.pk}}-false').addClass('blue');$('#{{event.pk}}-true').removeClass('blue');">Kan inte medverka</a>
+  {% csrf_token %}
+  <input type="hidden" name="accept" value="false">
+</form>
+
+<script>
+$(function () { 
+  if ({{event.attending}} == true){
+    $("#{{event.pk}}-true").addClass("blue");
+  }
+  if ({{event.attending}} == false){
+    $("#{{event.pk}}-false").addClass("blue");
+  }
+});
+</script>
+{% endfor %}
+</ul>
+</div>
+
+<script>
+$("form").submit( function() {
+    console.log();
+    $.ajax({
+           type: "POST",
+           url: $(this).attr("action"),
+           data: $(this).serialize(), // serializes the form's elements.
+           success: function(data)
+           {
+               console.log("great success");
+           }
+         });
+         
+    return false;
+});
+</script>
+{% endblock %}

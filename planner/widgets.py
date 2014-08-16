@@ -42,6 +42,8 @@ class ParticipationTokenInputWidget(TokenInputWidget):
                         status = "<img style='height:9px; margin-left:15px' src='/static/images/yellow_circle.png'>"
                     if User.objects.get(pk=v).participation_set.get(event=self.event, role=self.role).attending == "true":
                         status = "<img style='height:9px; margin-left:15px' src='/static/images/tick.png'>"
+                    if User.objects.get(pk=v).participation_set.get(event=self.event, role=self.role).attending == "false":
+                        status = "<img style='height:9px; margin-left:15px' src='/static/images/cross.png'>"
                     configuration['prePopulate'].extend([{'id': v, 'name': label, 'status': status}])
 
 
