@@ -8,9 +8,12 @@
     <script type="text/javascript" src="https://raw2.github.com/kayahr/jquery-fullscreen-plugin/master/jquery.fullscreen-min.js"></script>
     <script type="text/javascript" src="/static/js/ui.js"></script>
 
-    <link id="ui-theme" rel="stylesheet" href="/static/css/custom-theme/jquery-ui.css" />
+    <link id="ui-theme" rel="stylesheet" href="/static/css/theme/jquery-ui.css" />
+
     
+    <link id="ui-theme" rel="stylesheet" href="/static/css/custom-theme/jquery-ui.css" />
     <link rel="stylesheet" href="/static/css/style.css" />
+    <link rel="stylesheet" href="/static/css/custom-style.css" />
     
     <title>{% block title %}Planering{% endblock %}</title>  
     
@@ -26,11 +29,16 @@
 
 </head>
 <body>
-<img src="/static/images/logo.png" style="float:left;margin-right:1em;">
+<img id = "logo" src="http://lorempixel.com/237/80/abstract" style="float:left;margin-right:1em;">
+<div id = "main-menu" class="menu" style="float:right;width:100%;margin-top:2em">
 {% block menu %}
 {% endblock %}
-<div class="menu" style="float:right">
-<div class="menu_launcher" style="margin-top: -22px;">
+
+<img style="float:right" src="/static/images/fullscreen.jpeg" height="30" onclick="$(document).fullScreen(true);">
+
+<a style="float:right" class="a_button" href="/logout"> Logga ut </a>
+
+<div class="menu_launcher" style="float:right">
    Administration
    <div class="menu_container ui-widget-content">
         <ul class="menu">
@@ -40,15 +48,19 @@
         </ul>
     </div>
 </div>
-<a style="margin-top: -22px;" class="a_button" href="/logout"> Logga ut </a>
-<img src="/static/images/fullscreen.jpeg" height="30" onclick="$(document).fullScreen(true);">
+
+<a style="float:right" class="a_button" href="/"> Evenemang </a>
+
+
 </div>
+
 <script>
- $.ajaxSetup ({
-  cache: true
- });
-menus();
+    $.ajaxSetup ({cache: true});
+    menus();
+    var w = $("#main-menu").width();
+    var w = $("#main-menu").width(w-$("#logo").width()-20);
 </script>
+
 <div style="clear:both"></div>
 {% block body %}
 {% endblock %}

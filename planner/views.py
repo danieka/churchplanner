@@ -207,7 +207,7 @@ def participation_form(request, pk = None):
     upcoming = user.participation_set.filter(event__event__start_time__gte=datetime.datetime.now())
     events = []
     for event in upcoming:
-        events.append({'name': event.event.title, 'date': event.event.event.start_time, 'role': event.role.name, 'pk': event.pk, 'attending': event.attending, 'type': event.event.event_type.name})
+        events.append({'name': event.event.title, 'date': event.event.event.start_time, 'role': event.role.name, 'pk': event.pk, 'attending': event.attending, 'type': event.eve.event_type.name})
     return render(request, 'participation_form.html', {'events': events, 'pk': pk})
 
 @login_required
@@ -219,14 +219,14 @@ def viewer(request, pk):
 class SendInvitationsView(FormView):
     template_name = 'send_invitations.html'
     form_class = SendInvitationsForm
-    success_url = '/administration/send_invitations_confirmation/'
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
         for user in form.cleaned_data["users"]:
             user.send_login()
-        return super(FormView, self).form_valid(form)
+        self.template_name = 'confirmation.html'
+        return super(SendInvitationsView, self).render_to_response({'text': 'Inbjudningar utsända'})
 
     def get_context_data(self, **kwargs):
         context = super(FormView, self).get_context_data(**kwargs)
@@ -260,8 +260,8 @@ def get_mailchimp_users(request):
             new_user.save()
             new_users += 1
 
-    return render_to_response('get_mailchimp_users.html', {'new_users': new_users}, context_instance=RequestContext(request))
+    return render(request, 'confirmation.html', {'text': "Antal nya användare: %d" % (new_users)})
 
 def send_email_participation(request):
     tasks.send_email_participation()
-    return HttpResponse("Email successfully sent", content_type="application/json")
+    return render(request, "confirmation.html", {"text": "Manuella förfrågningar ivägskickade."})

@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 
 {% block menu %}
-<div class="menu">
-<div class="menu_launcher">
+<div style="float:left" class="menu_launcher">
     Nytt evenemang
    <div class="menu_container ui-widget-content">
         <ul class="menu">
@@ -12,12 +11,11 @@
         </ul>
     </div>
 </div>
-</div>
 {% endblock %}
 
 {% block body %}
 <div id="sidebar">
-<h4 class="select_title">Evenemang</h4>
+    <h4 class="select_title">Evenemang</h4>
     <ul class="label_selector" id="event_selector">
     {% for event in events %}
         <li class="label_selector" value={{event.type}}>{{event.verbose_name}}</li>
@@ -118,24 +116,26 @@ $(function () {
 
     $( "#resizable" ).resizable({
         minHeight: 25,
-        maxHeight: $(window).height()*0.6,
+        maxHeight: $(window).height()*0.8,
         handles: 'n',
     });
     
     $( "#tabs" ).width($(window).width()*0.9-10);
-    $( "#tabs" ).height($(window).height()*0.6);
+    $( "#tabs" ).height($(window).height()*0.5);
     $("#tabs").tabs();
     
     $( window ).resize(function() {
         $( "#tabs" ).width($(window).width()*0.9-10);
-        $( "#tabs" ).height($(window).height()*0.6);
+        $( "#tabs" ).height($(window).height()*0.5);
     });
 
     menus();
 
     $(".new_event").click(function(e) {
         $("#data").load(escape("/planner/event/" + encodeURI($(this).attr("value")) + "/form/")); 
-    });   
+    });
+
+    $("#sidebar").width($("#logo").width());   
 });
 </script>
 {% endblock %}

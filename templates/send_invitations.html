@@ -15,9 +15,11 @@ $(function() {
 });
 </script>
 
+<div class="content-no-sidebar">
 {{ form.media }}
 <form action="/administration/send_invitations/" method="post">{% csrf_token %}
 {{ form.as_p }}
 <input type="submit" value="Skicka inloggningsuppgifter" />
 </form>
+</div>
 {% endblock %}
