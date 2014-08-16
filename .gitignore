@@ -46,3 +46,6 @@ static/jquery_fields
 static/css/rosenius.css
 static/css/rosenius
 *.sqlite3
+
+/static/css/custom-style.css
+/static/css/‹custom-theme
