@@ -45,3 +45,4 @@ planner/import_users.py
 static/jquery_fields
 static/css/rosenius.css
 static/css/rosenius
+*.sqlite3
