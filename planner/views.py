@@ -196,7 +196,8 @@ def participation_form(request, pk = None):
         elif request.POST["accept"] == "false":
             participation.attending = "false"
         participation.save()
-        participation.attending
+        response = "Sucess"
+        return HttpResponse(response, content_type="application/html")
             
 
     if not request.user:

@@ -6,19 +6,21 @@
 <ul class="list">
 
 {% for event in events %}
-<li><center>{{event.role}} {{event.type}} {{event.date|date:"d M Y H:i"}}</center><br> 
+<li id="{{event.pk}}-li"><center>{{event.role}} {{event.type}} {{event.date|date:"d M Y H:i"}}</center><br> 
 
 <form style="float:left;margin-right:2em;margin-left:1em" action="/planner/participation/{{event.pk}}/" method="post">
-  <a id="{{event.pk}}-true" class="button" onclick="$(this).parent().submit();$('#{{event.pk}}-true').addClass('blue');$('#{{event.pk}}-false').removeClass('blue');">Kan medverka</a>
+  <a id="{{event.pk}}-true" class="button" onclick="$(this).parent().submit();">Kan medverka</a>
   {% csrf_token %}
   <input type="hidden" name="accept" value="true">
+  <input type="hidden" name="pk" value="{{event.pk}}">
 </form>
 
 
 <form  action="/planner/participation/{{event.pk}}/" method="post">
-  <a id="{{event.pk}}-false" class="button" style: onclick="$(this).parent().submit();$('#{{event.pk}}-false').addClass('blue');$('#{{event.pk}}-true').removeClass('blue');">Kan inte medverka</a>
+  <a id="{{event.pk}}-false" class="button" style: onclick="$(this).parent().submit();">Kan inte medverka</a>
   {% csrf_token %}
   <input type="hidden" name="accept" value="false">
+  <input type="hidden" name="pk" value="{{event.pk}}">
 </form>
 
 <script>
@@ -33,22 +35,38 @@ $(function () {
 </script>
 {% endfor %}
 </ul>
-</div>
+
 
 <script>
-$("form").submit( function() {
-    console.log();
-    $.ajax({
-           type: "POST",
-           url: $(this).attr("action"),
-           data: $(this).serialize(), // serializes the form's elements.
-           success: function(data)
-           {
-               console.log("great success");
-           }
-         });
-         
+$("form").submit( function(event) {
+    var bool = $(this).find('input[name="accept"]').val();
+    var pk = $(this).find('input[name="pk"]').val();
+    $('#' + pk + '-li').css( "opacity", 0.1); 
+
+    $.post($(this).attr("action"), $(this).serialize());
+    
+    setTimeout(function() {$('#' + pk + '-li').css( "opacity", 1);
+    if (bool == "true"){
+      $('#' + pk + '-true').addClass('blue');
+      $('#' + pk + '-false').removeClass('blue');
+    } if (bool == "false"){
+      $('#' + pk + '-true').removeClass('blue');
+      $('#' + pk + '-false').addClass('blue');
+    }}, 300);
     return false;
 });
 </script>
+</div>
+
+<div id="avsluta" data-title="Roseniuskyrkan" class="panel">
+<h3><center>Tack för att du fyllde i det!</center></h3>
+<br>
+Om du vill gå tillbaka och ändra dina val eller bara få en överblick över vad du ska göra så kan du återanvända länken som du fick i mailet.
+</div>
+{% endblock %}
+
+{% block footer %}
+<div id="navbar">
+<a href="#avsluta">Spara & Avsluta</a>
+</div>
 {% endblock %}
