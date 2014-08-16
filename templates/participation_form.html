@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block body %}
+<div class="content-no-sidebar">
 <table cellspacing="10">
 <tr>
 <th>Evenemang</th>
@@ -41,7 +42,7 @@ $(function () {
 </script>
 {% endfor %}
 </table>
-
+</div>
 <script>
 $("form").submit( function() {
     console.log();

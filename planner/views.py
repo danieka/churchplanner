@@ -207,7 +207,7 @@ def participation_form(request, pk = None):
     upcoming = user.participation_set.filter(event__event__start_time__gte=datetime.datetime.now())
     events = []
     for event in upcoming:
-        events.append({'name': event.event.title, 'date': event.event.event.start_time, 'role': event.role.name, 'pk': event.pk, 'attending': event.attending, 'type': event.eve.event_type.name})
+        events.append({'name': event.event.title, 'date': event.event.event.start_time, 'role': event.role.name, 'pk': event.pk, 'attending': event.attending, 'type': event.event.event_type.name})
     return render(request, 'participation_form.html', {'events': events, 'pk': pk})
 
 @login_required
