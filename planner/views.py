@@ -203,7 +203,11 @@ def participation_form(request, pk = None):
     if not request.user:
         user = authenticate(hash=request.GET['hash'], pk = request.GET['user'])
     else:
-        user = request.user
+        if request.user.is_anonymous():
+            print "here"
+            user = authenticate(hash=request.GET['hash'], pk = request.GET['user'])
+        else:
+            user = request.user
         
     upcoming = user.participation_set.filter(event__event__start_time__gte=datetime.datetime.now())
     events = []
