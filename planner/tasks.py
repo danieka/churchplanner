@@ -7,6 +7,11 @@ from django.conf import settings
 from django.template import loader, Context
 from django.core.mail import send_mail, EmailMessage
 
+# views.py
+import logging
+
+logger = logging.getLogger("churchplanner")
+
 @task
 def publish_task():
     events = Event.objects.all()
@@ -47,6 +52,8 @@ def send_email_participation():
             msg = EmailMessage(subject,html_content, from_email, [to])
             msg.content_subtype = "html"
             msg.send()
+
+            logger.info(html_content)
 
             for participation in user.participation_set.filter(event__event__start_time__gte=datetime.datetime.now(), email_sent = False):
                 participation.email_sent = True
