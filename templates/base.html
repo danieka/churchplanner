@@ -36,9 +36,10 @@
 
 {% if user.is_authenticated %}
 <img style="float:right" src="/static/images/fullscreen.jpeg" height="30" onclick="$(document).fullScreen(true);">
+{% endif %}
 
 <a style="float:right" class="a_button" href="/logout"> Logga ut </a>
-
+{% if user.is_authenticated %}
 <div class="menu_launcher" style="float:right">
    Administration
    <div class="menu_container ui-widget-content">
