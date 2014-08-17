@@ -42,6 +42,12 @@ $(function () {
 </script>
 {% endfor %}
 </table>
+
+<div id="dialog" title="Tack för ditt svar!" style="display: none">
+<p>Om du vill gå tillbaka och ändra dina val eller bara få en överblick över dina uppgifter så kan du återanvända länken som du fick i mailet.</p>
+</div>
+
+<button style="margin-top:2em;margin-left:15em" onclick="$('#dialog').dialog();">Spara</button>
 </div>
 <script>
 $("form").submit( function() {

@@ -34,6 +34,7 @@
 {% block menu %}
 {% endblock %}
 
+{% if user.is_authenticated %}
 <img style="float:right" src="/static/images/fullscreen.jpeg" height="30" onclick="$(document).fullScreen(true);">
 
 <a style="float:right" class="a_button" href="/logout"> Logga ut </a>
@@ -50,7 +51,7 @@
 </div>
 
 <a style="float:right" class="a_button" href="/"> Evenemang </a>
-
+{% endif %}
 
 </div>
 
