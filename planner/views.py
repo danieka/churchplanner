@@ -221,9 +221,14 @@ def viewer(request, pk):
     documents = Event.objects.get(pk = pk).documents.all()
     return render(request, 'viewer.html', {'documents': documents, 'initial': iri_to_uri(request.GET['file'])})
 
+
 class SendInvitationsView(FormView):
     template_name = 'send_invitations.html'
     form_class = SendInvitationsForm
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ProtectedView, self).dispatch(*args, **kwargs)
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
@@ -241,6 +246,7 @@ class SendInvitationsView(FormView):
         context["users"] = json.dumps(l, ensure_ascii=False)
         return context
 
+@login_required
 def get_mailchimp_users(request):
     list_id = "63c4d992d8"
     try:
@@ -267,6 +273,7 @@ def get_mailchimp_users(request):
 
     return render(request, 'confirmation.html', {'text': "Antal nya användare: %d" % (new_users)})
 
+@login_required
 def send_email_participation(request):
     tasks.send_email_participation()
     return render(request, "confirmation.html", {"text": "Manuella förfrågningar ivägskickade."})
