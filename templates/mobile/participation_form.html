@@ -7,8 +7,8 @@
 
 {% for event in events %}
 <li id="{{event.pk}}-li"><center>{{event.role}} {{event.type}} {{event.date|date:"d M Y H:i"}}</center><br> 
-
-<form style="float:left;margin-right:2em;margin-left:1em" action="/planner/participation/{{event.pk}}/" method="post">
+<center>
+<form style="display:inline;margin-right:2em;margin-left:1em" action="/planner/participation/{{event.pk}}/" method="post">
   <a id="{{event.pk}}-true" class="button" onclick="$(this).parent().submit();">Kan medverka</a>
   {% csrf_token %}
   <input type="hidden" name="accept" value="true">
@@ -16,13 +16,13 @@
 </form>
 
 
-<form  action="/planner/participation/{{event.pk}}/" method="post">
+<form style="display:inline" action="/planner/participation/{{event.pk}}/" method="post">
   <a id="{{event.pk}}-false" class="button" style: onclick="$(this).parent().submit();">Kan inte medverka</a>
   {% csrf_token %}
   <input type="hidden" name="accept" value="false">
   <input type="hidden" name="pk" value="{{event.pk}}">
 </form>
-
+</center>
 <script>
 $(function () { 
   if ({{event.attending}} == true){
@@ -67,6 +67,6 @@ Om du vill gå tillbaka och ändra dina val eller bara få en överblick över v
 
 {% block footer %}
 <div id="navbar">
-<a href="/planner/participation/thanks/" data-ignore="True">Spara & Avsluta</a>
+<center><a class="button" href="/planner/participation/thanks/" data-ignore="True">Spara & Avsluta</a></center>
 </div>
 {% endblock %}
