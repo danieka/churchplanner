@@ -28,6 +28,7 @@ from django.views.decorators.http import require_POST
 import tasks
 from mailsnake import MailSnake
 from mailsnake.exceptions import *
+from django.utils.decorators import method_decorator
 
 
 

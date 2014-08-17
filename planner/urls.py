@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+from django.views.generic import TemplateView
 
 from views import *
 
@@ -10,5 +11,6 @@ urlpatterns = patterns('',
                        (r"^users/$", get_users),
                        (r"^participation/$", participation_form),
                        (r"^participation/(?P<pk>\d{1,6})/$", participation_form),
+                       (r"^participation/thanks/$", TemplateView.as_view(template_name='participation_thanks.html')),
                        )
 

@@ -58,8 +58,8 @@ $("form").submit( function(event) {
 </script>
 </div>
 
-<div id="avsluta" data-title="Roseniuskyrkan" class="panel">
-<h3><center>Tack för att du fyllde i det!</center></h3>
+<div id="avsluta" name="avsluta" data-title="Tack" class="panel">
+<h3><center>Tack för att Ditt svar!</center></h3>
 <br>
 Om du vill gå tillbaka och ändra dina val eller bara få en överblick över vad du ska göra så kan du återanvända länken som du fick i mailet.
 </div>
@@ -67,6 +67,6 @@ Om du vill gå tillbaka och ändra dina val eller bara få en överblick över v
 
 {% block footer %}
 <div id="navbar">
-<a href="#avsluta">Spara & Avsluta</a>
+<a href="/planner/participation/thanks/" data-ignore="True">Spara & Avsluta</a>
 </div>
 {% endblock %}
