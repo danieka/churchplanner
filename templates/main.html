@@ -26,7 +26,9 @@
 
 </div>
 
-<div id="eventtable" class="content">
+<div id="table-wrapper">
+  <div id="table-scroll">
+  </div>
 </div>
 
 
@@ -66,17 +68,18 @@ function update_events(data){
     $.each( data.events, function( key, val ) {
     d = new Date(val.timestamp);
              
-         
-    items.push( "<tr id=" + val.pk + " type=" + val.type + "><td>" + val.title + "</td>" + "<td>" + val.verbose_name + "</td>" +  "<td>"+d.getDate() + "/" + (d.getMonth()+1) + "</td></tr>" );
+       
+    items.push( "<tr id=" + val.pk + " type='" + val.type + "'><td>" + val.title + "</td>" + "<td>" + val.verbose_name + "</td>" +  "<td>"+d.getDate() + "/" + (d.getMonth()+1) + "</td></tr>" );
     });
+    console.log(items);
 
 
-    $("#eventtable").html('<table class="eventtable"> \
+    $("#table-scroll").html('<table class="eventtable"> \
             <thead>\
                 <tr style="background-color: #fff !important;">\
-                <th>Titel</th>\
-                <th>Typ</th>\
-                <th>Datum</th>\
+                <th><span class="text">Titel</span></th>\
+                <th><span class="text">Typ</span></th>\
+                <th><span class="text">Datum</span></th>\
                 </tr>\
             </thead>\
             <tbody>\
@@ -84,8 +87,8 @@ function update_events(data){
     )
     
     $("tr").click(function(e) {
-        $("#data").load("/planner/event/" + $(e.target).parent().attr("type") + "/form/" +  $(e.target).parent().attr("id") + "/");
-        $("#documents").load("/fileuploader/" + $(e.target).parent().attr("id") +"/");
+        $("#data").load(encodeURI("/planner/event/" + $(e.target).parent().attr("type") + "/form/" +  $(e.target).parent().attr("id") + "/"));
+        $("#documents").load(encodeURI("/fileuploader/" + $(e.target).parent().attr("id") +"/"));
     });
     
     $("tr").hover(function(){
@@ -118,6 +121,9 @@ $(function () {
         minHeight: 25,
         maxHeight: $(window).height()*0.8,
         handles: 'n',
+        stop: function (event, ui) {
+            $("#table-scroll").height( ui.position.top - $("#table-wrapper").position().top - 5);
+        }
     });
     
     $( "#tabs" ).width($(window).width()*0.9-10);
@@ -132,7 +138,7 @@ $(function () {
     menus();
 
     $(".new_event").click(function(e) {
-        $("#data").load(escape("/planner/event/" + encodeURI($(this).attr("value")) + "/form/")); 
+        $("#data").load(encodeURI("/planner/event/" + $(this).attr("value") + "/form/")); 
     });
 
     $("#sidebar").width($("#logo").width());   

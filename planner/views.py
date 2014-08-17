@@ -29,6 +29,7 @@ import tasks
 from mailsnake import MailSnake
 from mailsnake.exceptions import *
 from django.utils.decorators import method_decorator
+import logging
 
 logger = logging.getLogger("churchplanner")
 
@@ -115,12 +116,16 @@ def event_form(request, pk = None, eventtype = None):
             instance = Event.objects.get(pk = pk)
     
     if request.method == "GET":
-        if pk:
-            title = instance.title
-            form = EventForm(instance = instance, user = request.user, event_type = eventtype)
-        else:
-            title = ("Ny %s" % eventtype)
-            form = EventForm(user=request.user, event_type = eventtype)
+        try:
+            if pk:
+                title = instance.title
+                form = EventForm(instance = instance, user = request.user, event_type = eventtype)
+            else:
+                title = ("Ny %s" % eventtype)
+                form = EventForm(user=request.user, event_type = eventtype)
+        except:
+            print eventtype
+            logging.error("%s does not match any event." % eventtype) 
 
 
     elif request.method == "POST":
@@ -239,7 +244,7 @@ class SendInvitationsView(FormView):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
         for user in form.cleaned_data["users"]:
-            :ser.send_login()
+            user.send_login()
         self.template_name = 'confirmation.html'
         return super(SendInvitationsView, self).render_to_response({'text': 'Inbjudningar utsända'})
 
