@@ -6,7 +6,7 @@ def event_processor(HttpRequest):
     if HttpRequest.path == "/":
         l = []
         for event in models.EventType.objects.all():
-            l.append({'type': event.name})
-        return {'events': l}
+            l.append(event.name)
+        return {'eventtype': l}
     
     return {}

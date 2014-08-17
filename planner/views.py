@@ -30,7 +30,7 @@ from mailsnake import MailSnake
 from mailsnake.exceptions import *
 from django.utils.decorators import method_decorator
 
-
+logger = logging.getLogger("churchplanner")
 
 class AssociateRedirect(OAuthRedirect):
     """This is the view that redirects to facebook when someone wants to link their
@@ -209,8 +209,12 @@ def participation_form(request, pk = None):
             user = authenticate(hash=request.GET['hash'], pk = request.GET['user'])
         else:
             user = request.user
-        
-    upcoming = user.participation_set.filter(event__event__start_time__gte=datetime.datetime.now())
+    
+    try:   
+        upcoming = user.participation_set.filter(event__event__start_time__gte=datetime.datetime.now())
+    except:
+        logger.error(request)
+
     events = []
     for event in upcoming:
         events.append({'name': event.event.title, 'date': event.event.event.start_time, 'role': event.role.name, 'pk': event.pk, 'attending': event.attending, 'type': event.event.event_type.name})
@@ -235,7 +239,7 @@ class SendInvitationsView(FormView):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
         for user in form.cleaned_data["users"]:
-            user.send_login()
+            :ser.send_login()
         self.template_name = 'confirmation.html'
         return super(SendInvitationsView, self).render_to_response({'text': 'Inbjudningar utsända'})
 
