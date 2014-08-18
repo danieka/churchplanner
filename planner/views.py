@@ -238,7 +238,7 @@ class SendInvitationsView(FormView):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(ProtectedView, self).dispatch(*args, **kwargs)
+        return super(SendInvitationsView, self).dispatch(*args, **kwargs)
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
