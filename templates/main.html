@@ -5,8 +5,8 @@
     Nytt evenemang
    <div class="menu_container ui-widget-content">
         <ul class="menu">
-        {% for event in events %}
-            <li class="new_event" value="{{event.type}}">{{event.type}}</li>
+        {% for name in eventtype %}
+            <li class="new_event" value="{{name}}">{{name}}</li>
         {% endfor %}
         </ul>
     </div>
