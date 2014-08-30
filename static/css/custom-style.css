@@ -12,28 +12,7 @@ The jquery theme can be modified on:
 http://jqueryui.com/themeroller/#!zThemeParams=5d00000100fd05000000000000003d8888d844329a8dfe02723de3e5700cae1f67ed0688a9ba892ddf758bef9acad504773557004be4dc642ad65003de429ed006f5e099f0c7d3a6487ed24bbbeb08218f6afc3c4e4139d665d70e9dabe653dfe2f7a8d2b15be508029c91e123ddd11ee15abdd45535c04fbd2071635f0020bdeec843d32b9c34ec16968e79b68529f83b9a6e76a306069bc6baedbbc153890a5b0bf0b34acf19173a6c0017d9d7f482eaafbc8b268fbcc217189f3cb111980884207bc4e75a7aff7ea40e6976ff2354369e17c7b0876c831278fb0a114b7a31bb70602a48a2cf414316b5c9cfd5cd737ffadf23fe94f7d56f252f00db9e38d290ed2b265fa0c717ae3be18c6f3a78bd2070428a44876939369d3775b879833730614ccdec95d84fb274397ee9c35e2585d445d048de54740623e9751af5812a76f62fd5ad0a87d8dd795d099c588c35da14fe3606326ba198686b53f163563ed97b4999b2b26d7c93cb1d7898547eab2e1a91df41fb6feb6075076f2d18fdd023463728cb11585843286f2d147fe3ea274bacea87de4c27c7f9edd7d759314eb4796239bc332ebb142128cb10bee9d18b48edc7b0502a266a2cdcf5e27332d2e02d4819291dbcc8bb417a3af6e0cbe2b81492212fa911dbcee1badf1b18fef56104dc
 */
 
-/* FONT INCLUDES */
 
-@font-face
-{
-font-family: BreeSerif;
-src: url('/static/fonts/BreeSerif-Regular.ttf');
-}
-
-@font-face
-{
-font-family: OpenSans;
-src: url('/static/fonts/OpenSans-Regular.ttf');
-}
-
-@font-face
-{
-font-family: OpenSansLight;
-src: url('/static/fonts/OpenSans-Light.ttf');
-}
-
-/* FONTS END */
-*{font-family:OpenSans;}
 
 
 h1, h2, h3, .widget-title, .mtt_css_larger_font { font-family: BreeSerif; color: #5da9b0; }

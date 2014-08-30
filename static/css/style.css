@@ -20,6 +20,11 @@ h4 {
     margin-left:20px;
 }
 
+.date_selector{
+    margin-left:35px;
+    width: 8em;
+    }
+
 ul.label_selector{
     margin-top:0;
     margin-left:-15px;
@@ -220,8 +225,10 @@ tr:nth-child(odd)            { background-color:#fff; }
     height: 80px;
 }
 
+
 #table-wrapper {
-  position:relative;
+    margin-left: 15%;
+    position:relative;
 }
 #table-scroll {
   height:300px;
@@ -235,6 +242,6 @@ tr:nth-child(odd)            { background-color:#fff; }
 #table-wrapper table thead th .text {
   position:absolute;   
   top:-10px;
-  z-index:2;
+  z-index:-1;
   height:20px;
 }

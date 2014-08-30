@@ -15,10 +15,14 @@
 
 {% block body %}
 <div id="sidebar">
+    <h4 class="select_title">Datum</h4>
+    <input class="date_selector" type="text" id="event_start_date">
+    <input class="date_selector" style="margin-top: 0.2em;" type="text" id="event_end_date">
+
     <h4 class="select_title">Evenemang</h4>
     <ul class="label_selector" id="event_selector">
     {% for name in eventtype %}
-        <li class="label_selector" value={{name}}>{{name}}</li>
+        <li class="label_selector" value="{{name}}">{{name}}</li>
     {% endfor %}
     </ul>
 </div>
@@ -51,13 +55,14 @@
 
 <script>
 function get_events() {
+    var url = "planner/getevents/" + $("#event_start_date").val() + '--' + $("#event_end_date").val() + '/'
     if ($.selected_events.length == 0){
-        $.getJSON( "planner/getevents/", function( data ) {
+        $.getJSON( url, function( data ) {
             update_events(data);
             });
         }
     else {
-        $.getJSON( "planner/getevents/", "eventtype="+$.selected_events, function( data ) {
+        $.getJSON( url, "eventtype="+ encodeURI($.selected_events), function( data ) {
             update_events(data);
             });
     }
@@ -71,8 +76,6 @@ function update_events(data){
        
     items.push( "<tr id=" + val.pk + " type='" + val.type + "'><td>" + val.title + "</td>" + "<td>" + val.verbose_name + "</td>" +  "<td>"+d.getDate() + "/" + (d.getMonth()+1) + "</td></tr>" );
     });
-    console.log(items);
-
 
     $("#table-scroll").html('<table class="eventtable"> \
             <thead>\
@@ -97,12 +100,27 @@ function update_events(data){
 }
 
 $(function () {
+    datepicker_options = {
+        dateFormat: "yy-mm-dd",
+        firstDay: 1,
+        onSelect: function(){
+            get_events();
+        }
+    }
+
     $.selected_events = [];
+
+    $( "#event_start_date" ).datepicker(datepicker_options); 
+    $( "#event_end_date" ).datepicker(datepicker_options);
+
+    $( "#event_start_date").datepicker( "setDate", new Date())
+    $( "#event_end_date" ).datepicker( "setDate", "+6m" );
+
     get_events();
+
     $( "ul.label_selector").bind( "mousedown", function ( e ) {
         e.metaKey = true;
         val = $(e.target).attr("value");
-        
         if ($.inArray(val, $.selected_events) != -1){
             $.selected_events.splice($.inArray(val, $.selected_events), 1);
             }
@@ -141,7 +159,10 @@ $(function () {
         $("#data").load(encodeURI("/planner/event/" + $(this).attr("value") + "/form/")); 
     });
 
-    $("#sidebar").width($("#logo").width());   
+    $("#sidebar").width($("#logo").width());  
+
+    console.log("here");
+
 });
 </script>
 {% endblock %}

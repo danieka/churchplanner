@@ -4,6 +4,8 @@ import datetime
 import calendar
 import operator
 import urllib
+import re
+from datetime import date
 
 from django.shortcuts import render_to_response, redirect, render
 from django.template import RequestContext
@@ -30,6 +32,8 @@ from mailsnake import MailSnake
 from mailsnake.exceptions import *
 from django.utils.decorators import method_decorator
 import logging
+
+p = re.compile(r'(\d{4})-(\d{2})-(\d{2})')
 
 logger = logging.getLogger("churchplanner")
 
@@ -80,16 +84,20 @@ class LoginCallback(OAuthCallback):
         return redirect("/register/")
 
 @login_required
-def get_events(request):
+def get_events(request, start, end):
     """This returns all events, or a subset of them. Parameters are passed in the GET request."""
+    start = date(*map(int, p.match(start).groups()))
+    end = date(*map(int, p.match(end).groups())) 
+
     data = []
-    events = []
+    events = Event.objects.filter(event__start_time__gte= start, event__start_time__lte = end).order_by("event__start_time")
     if 'eventtype' in request.GET:
-        for eventtype in request.GET['eventtype'].split(","):
-            events = chain(events, Event.objects.filter(event__start_time__gte= datetime.datetime.now(), event_type__name=eventtype))
-            
-    else: #Means we are returning all events
-        events = Event.objects.filter(event__start_time__gte= datetime.datetime.now()).order_by("event__start_time")
+        print request.GET['eventtype']
+        eventtype = [a for a in request.GET['eventtype'].split(",")]   
+        print eventtype 
+        events = events.filter(event_type__name__in = eventtype)
+      
+        
 
     for event in events:
         data.append({'type': event.event_type.name, 'pk': event.pk, 'verbose_name': event.event_type.name, 'title': event.title, 'timestamp':calendar.timegm(event.event.start_time.timetuple()) * 1000})
