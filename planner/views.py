@@ -124,7 +124,6 @@ def event_form(request, pk = None, eventtype = None):
                 title = ("Ny %s" % eventtype)
                 form = EventForm(user=request.user, event_type = eventtype)
         except:
-            print eventtype
             logging.error("%s does not match any event." % eventtype) 
 
 
@@ -135,8 +134,6 @@ def event_form(request, pk = None, eventtype = None):
 
         else:
             form = EventForm(request.POST, user = request.user, event_type = eventtype)
-
-        print form.is_valid()
         
         if form.is_valid():
             pk = form.save().pk           
@@ -144,7 +141,6 @@ def event_form(request, pk = None, eventtype = None):
             return HttpResponse(response, content_type="application/json")
         
         else:
-            print form.errors
             response = json.dumps({'pk': "fail", 'response':"%s failed" % title})
             return HttpResponse(response, content_type="application/json")
         
@@ -210,7 +206,6 @@ def participation_form(request, pk = None):
         user = authenticate(hash=request.GET['hash'], pk = request.GET['user'])
     else:
         if request.user.is_anonymous():
-            print "here"
             user = authenticate(hash=request.GET['hash'], pk = request.GET['user'])
         else:
             user = request.user
@@ -224,6 +219,11 @@ def participation_form(request, pk = None):
     for event in upcoming:
         events.append({'name': event.event.title, 'date': event.event.event.start_time, 'role': event.role.name, 'pk': event.pk, 'attending': event.attending, 'type': event.event.event_type.name})
     return render(request, 'participation_form.html', {'events': events, 'pk': pk})
+
+@login_required
+def admin_participation_form(request, pk):
+    if pk and request.method == "POST":
+        print request
 
 @login_required
 def viewer(request, pk):
@@ -262,7 +262,6 @@ def get_mailchimp_users(request):
     try:
         m = MailSnake('c1ef033d26e799af744c00edc821634b-us8', api='export')
         members = m.list(id=list_id)
-        print len(members)
     
     # except mailchimp.ListDoesNotExistError:
     #     messages.error(request, "The list does not exist")

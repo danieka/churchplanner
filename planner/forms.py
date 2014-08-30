@@ -72,7 +72,6 @@ class EventForm(ModelForm):
                 checked_pk = []
 
                 for user in self.cleaned_data[role.name.encode('ascii', 'ignore')]:
-                    print user
                     if len(user.participation_set.filter(event = self.instance, role = role)) == 0:
                         Participation.objects.create(user = user, event = self.instance, attending = "null", role = role)
 
