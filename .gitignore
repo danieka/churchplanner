@@ -40,7 +40,6 @@ settings.py
 *.pyc
 *~
 
-planner/migrations
 planner/import_users.py
 static/jquery_fields
 static/css/rosenius.css
