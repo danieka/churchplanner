@@ -180,6 +180,7 @@ class Participation(models.Model):
     attending = models.CharField(max_length=10, default="null")
     role = models.ForeignKey(Role)
     email_sent = models.BooleanField(default = False)
+    last_email_sent = models.DateField(blank = True, null = True)
 
 
 def send_login(self):

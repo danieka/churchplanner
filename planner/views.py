@@ -131,8 +131,8 @@ def event_form(request, pk = None, eventtype = None):
             else:
                 title = ("Ny %s" % eventtype)
                 form = EventForm(user=request.user, event_type = eventtype)
-        except:
-            logging.error("%s does not match any event." % eventtype) 
+        except Exception, e:
+            logging.error("%s does not match any event. \n %s %s" % (eventtype, Exception, e)) 
 
 
     elif request.method == "POST":
