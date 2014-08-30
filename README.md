@@ -38,8 +38,6 @@ Last you need to install RabbitMQ, or some other celery backend if you want task
 
 To set up the database run:
 
-./manage schemamigration planner --inital
-
 ./manage syncdb
 
 ./manage migrate planner
