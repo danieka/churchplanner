@@ -60,7 +60,7 @@ $( document ).ready(function() {
            url: url,
            data: $("#event_form").serialize(), // serializes the form's elements.
            success: function(data)
-           {o
+           {
                $("#data").load("/planner/event/{{type}}/form/" + data['pk'] + "/");
                $("#documents").load("/fileuploader/" + data['pk'] +"/");
                get_events();
