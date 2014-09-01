@@ -251,7 +251,6 @@ def participation_add(request, pk, participation_name, user):
     if request.method == "POST":
         Participation.objects.create(user = User.objects.get(pk = user), 
             event = Event.objects.get(pk = pk), 
-            attending = "null", 
             role = Role.objects.get(name = participation_name))
 
     response = json.dumps("success")
