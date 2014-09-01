@@ -259,7 +259,6 @@ def participation_add(request, pk, participation_name, user):
 
 @login_required
 def participation_delete(request, pk, participation_name, user):
-    print pk, participation_name, user
     if request.method == "POST":
         Participation.objects.get(user = User.objects.get(pk = user), 
             event = Event.objects.get(pk = pk), 

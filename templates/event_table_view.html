@@ -1,8 +1,10 @@
 <link rel="stylesheet" media="all" type="text/css" href="/static/jquery_fields/tokeninput/styles/token-input.css">
 <script src="/static/jquery_fields/tokeninput/src/jquery.tokeninput.js" type="text/javascript"></script>
 
+
 <script>
 $( document ).ready(function() {
+
     $.users = {{users|safe}}
 });
 
@@ -33,14 +35,12 @@ function onDelete(item, li) {
 </script>
 
 {% csrf_token %}
-<table class="eventtable"> 
-	<thead>
-	    <tr style="background-color: #fff !important;">
+<table id="table" class="eventtable"> 
+	    <tr class="sticky" style="background-color: #fff !important;">
 	    {% for name in columns %}
 	    <th><span class="text">{{name}}</span></th>
 	    {% endfor %}
 	    </tr>
-	</thead>
 	<tbody>
 	{% for event in events %}
 		<tr value="{{event.pk}}">

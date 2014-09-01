@@ -4,6 +4,7 @@ body {
     margin-right:5%;
 }
 
+
 #sidebar {
     clear:both;
     float: left;
@@ -242,11 +243,13 @@ tr:nth-child(odd)            { background-color:#fff; }
     margin-left: 15%;
     position:relative;
 }
+
 #table-scroll {
   height:300px;
   overflow:auto;  
   margin-top:20px;
 }
+
 #table-wrapper table {
   width:95%;
 }
@@ -256,4 +259,28 @@ tr:nth-child(odd)            { background-color:#fff; }
   top:-10px;
   z-index:5;
   height:20px;
+}
+
+/*#table-wrapper2 {
+    position:relative;
+}
+
+#table-scroll2 {
+  height:600px;
+  overflow:scroll;  
+  margin-top:20px;
+}
+
+#table-wrapper2 table {
+  width:95%;
+}*/
+
+.sticky {
+    position: -webkit-sticky;
+    position: -moz-sticky;
+    position: -ms-sticky;
+    position: -o-sticky;
+    position: sticky;
+    top: 10px;
+    z-index:1;
 }
