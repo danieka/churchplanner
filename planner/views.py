@@ -118,7 +118,7 @@ def event_table(request, eventtype):
                 configuration = {"prePopulate": [{"id": participation.user.pk, "name": participation.user.first_name + " " + participation.user.last_name, "status": participation.status_as_icon()} for participation in Participation.objects.filter(event = event, role = role)]},
                 event = event, 
                 role = role,)
-            t.append(widget.render(role.name, "aa", attrs = {"id": str(role.name) + "-" + str(event.pk)}))
+            t.append(widget.render(role.name, "aa", attrs = {"id": unicode(role.name) + "-" + str(event.pk)}))
         events.append({"columns": t, "pk": event.pk})
     return render(request, "event_table_view.html", {"columns": columns, "events": events, "users": users})
 
