@@ -110,7 +110,7 @@ def event_table(request, eventtype):
     for role in eventtype.roles.all():
         columns.append(role.name)
     events = []
-    for event in Event.objects.filter(event_type = eventtype, event__start_time__gte = date.today()):
+    for event in Event.objects.filter(event_type = eventtype, event__start_time__gte = date.today()).order_by("event__start_time"):
         t = [event.event.start_time.strftime("%d %B %Y"), event.title]
         for role in eventtype.roles.all():
             widget = ParticipationTokenInputWidget( 
