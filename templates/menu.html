@@ -1,0 +1,26 @@
+<div style="float:left" class="menu_launcher">
+    Nytt evenemang
+   <div class="menu_container ui-widget-content">
+        <ul class="menu">
+        {% for name in eventtype %}
+            <li class="new_event" value="{{name}}">{{name}}</li>
+        {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<div id="view" style="display:inline;">
+<input type="radio" id="split" name="radio" checked="checked" value="/planner/extended/"><label for="split">Choice 1</label>
+<input type="radio" id="list" name="radio" value="/planner/table/"><label for="list">Choice 1</label>
+</div>
+
+<script>
+$(function() {
+    $("#view").buttonset()
+    $("#split").button( { icons: {primary:'ui-icon-clipboard'}, text: false} );
+    $("#list").button( { icons: {primary:'ui-icon-grip-solid-horizontal'}, text: false } );
+    $("#view").on("change", function(item){
+        window.location.href = $("#view :radio:checked").attr('value');
+    })
+})
+</script>

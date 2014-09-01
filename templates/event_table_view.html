@@ -1,0 +1,55 @@
+<link rel="stylesheet" media="all" type="text/css" href="/static/jquery_fields/tokeninput/styles/token-input.css">
+<script src="/static/jquery_fields/tokeninput/src/jquery.tokeninput.js" type="text/javascript"></script>
+
+<script>
+$( document ).ready(function() {
+    $.users = {{users|safe}}
+});
+
+function onAdd(item, li) {
+    //li.append('<span><img src="/static/images/yellow_circle.png" height="16" width="16" style="margin-right:2px"></span>');
+        $.ajax({
+           type: "POST",
+           url: "/planner/event/" +  li.parent().parent().parent().attr("value") +"/participation/" + li.parent().parent().children("input").attr("name") + "/add/" + item.id + "/",
+           data: {csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value}, // serializes the form's elements.
+           success: function(data)
+           {
+               console.log("great success");
+           }
+         });
+    }
+
+function onDelete(item, li) {
+        $.ajax({
+           type: "POST",
+           url: "/planner/event/" +  li.parent().parent().attr("value") + "/participation/" + li.attr("name") + "/delete/" + item.id + "/",
+           data: {csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value}, // serializes the form's elements.
+           success: function(data)
+           {
+               console.log("great success");
+           }
+         });
+    }
+</script>
+
+{% csrf_token %}
+<table class="eventtable"> 
+	<thead>
+	    <tr style="background-color: #fff !important;">
+	    {% for name in columns %}
+	    <th><span class="text">{{name}}</span></th>
+	    {% endfor %}
+	    </tr>
+	</thead>
+	<tbody>
+	{% for event in events %}
+		<tr value="{{event.pk}}">
+			{% for column in event.columns %}
+				<td width=1>
+				{{column}}
+				</td>
+			{% endfor %}
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>

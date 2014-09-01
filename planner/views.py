@@ -92,17 +92,35 @@ def get_events(request, start, end):
     data = []
     events = Event.objects.filter(event__start_time__gte= start, event__start_time__lte = end).order_by("event__start_time")
     if 'eventtype' in request.GET:
-        print request.GET['eventtype']
         eventtype = [a for a in request.GET['eventtype'].split(",")]   
-        print eventtype 
         events = events.filter(event_type__name__in = eventtype)
-      
-        
-
     for event in events:
         data.append({'type': event.event_type.name, 'pk': event.pk, 'verbose_name': event.event_type.name, 'title': event.title, 'timestamp':calendar.timegm(event.event.start_time.timetuple()) * 1000})
     response = json.dumps({'events': data})
     return HttpResponse(response, content_type="application/json")
+
+def event_table(request, eventtype):
+    l = []
+    for user in User.objects.all():
+        l.append({'id': user.pk, 'name': user.first_name + " " +  user.last_name})
+    users = json.dumps(l, ensure_ascii=False)
+
+    eventtype = EventType.objects.get(name = eventtype)
+    columns = ["Datum", "Titel"]
+    for role in eventtype.roles.all():
+        columns.append(role.name)
+    events = []
+    for event in Event.objects.filter(event_type = eventtype, event__start_time__gte = date.today()):
+        t = [event.event.start_time.strftime("%d %B %Y"), event.title]
+        for role in eventtype.roles.all():
+            widget = ParticipationTokenInputWidget( 
+                json_source="/planner/users/", 
+                configuration = {"prePopulate": [{"id": participation.user.pk, "name": participation.user.first_name + " " + participation.user.last_name, "status": participation.status_as_icon()} for participation in Participation.objects.filter(event = event, role = role)]},
+                event = event, 
+                role = role,)
+            t.append(widget.render(role.name, "aa", attrs = {"id": str(role.name) + "-" + str(event.pk)}))
+        events.append({"columns": t, "pk": event.pk})
+    return render(request, "event_table_view.html", {"columns": columns, "events": events, "users": users})
 
 @login_required
 def event_form(request, pk = None, eventtype = None):
@@ -229,9 +247,27 @@ def participation_form(request, pk = None):
     return render(request, 'participation_form.html', {'events': events, 'pk': pk})
 
 @login_required
-def admin_participation_form(request, pk):
-    if pk and request.method == "POST":
-        print request
+def participation_add(request, pk, participation_name, user):
+    if request.method == "POST":
+        Participation.objects.create(user = User.objects.get(pk = user), 
+            event = Event.objects.get(pk = pk), 
+            attending = "null", 
+            role = Role.objects.get(name = participation_name))
+
+    response = json.dumps("success")
+    return HttpResponse(response, content_type="application/json")
+
+@login_required
+def participation_delete(request, pk, participation_name, user):
+    print pk, participation_name, user
+    if request.method == "POST":
+        Participation.objects.get(user = User.objects.get(pk = user), 
+            event = Event.objects.get(pk = pk), 
+            attending = "null", 
+            role = Role.objects.get(name = participation_name)).delete()
+
+    response = json.dumps("success")
+    return HttpResponse(response, content_type="application/json")
 
 @login_required
 def viewer(request, pk):

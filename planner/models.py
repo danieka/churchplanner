@@ -67,13 +67,13 @@ class Occurrence(models.Model):
         return unicode(self.start_time.strftime("%d %b %H:%M"), "utf-8")
 
 class Role(models.Model):
-    name = models.CharField(max_length = 30)
+    name = models.CharField(max_length = 30, unique = True)
     
     def __unicode__(self):
         return self.name
         
 class EventType(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique = True)
     roles = models.ManyToManyField(Role)
     initial_description = models.TextField(max_length = 4000)
     image = models.ImageField(upload_to="images", null=True, blank = True)
@@ -181,6 +181,15 @@ class Participation(models.Model):
     role = models.ForeignKey(Role)
     email_sent = models.BooleanField(default = False)
     last_email_sent = models.DateField(blank = True, null = True)
+
+    def status_as_icon(self):
+        if self.attending == "null":
+            src = "/static/images/yellow_circle.png"
+        if self.attending == "true":
+            src = "/static/images/tick.png"                    
+        if self.attending == "false":
+            src = "/static/images/cross.png"
+        return "<img style='float:right;height:9px; margin-right:15px' src='%s'>" % src
 
 
 def send_login(self):

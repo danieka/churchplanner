@@ -19,6 +19,8 @@ class ParticipationTokenInputWidget(TokenInputWidget):
     $(document).ready(function() {
         $('#%(id)s').tokenInput($.users, {
             onAdd: function (item) { onAdd(item, $(this).prev().children().last().prev()); }, 
+            onDelete: function (item) { onDelete(item, $(this)); }, 
+            preventDuplicates: true,
             tokenFormatter: function(item){ return "<li><p>" + item.name + "</p>" + "<span style='float:left;padding-left:0.5em'>" + item.status + "</span></li>"}, 
             %(configuration)s
             });
@@ -37,7 +39,6 @@ class ParticipationTokenInputWidget(TokenInputWidget):
         	   configuration['prePopulate'].extend([{'id': v, 'name': label} for v, label in self.choices])
             else:
                 for v, label in self.choices:
-                    print self.role
                     if User.objects.get(pk=v).participation_set.get(event=self.event, role=self.role).attending == "null":
                         src = "/static/images/yellow_circle.png"
                     if User.objects.get(pk=v).participation_set.get(event=self.event, role=self.role).attending == "true":

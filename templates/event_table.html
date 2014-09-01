@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block menu %}
+{% include "menu.html" %}
+
+
+	<select name="eventtype" id="eventtype">
+	{% for name in eventtype %}
+		<option>{{name}}</option>
+    {% endfor %}
+	</select>
+
+
+{% endblock %}
+{% block body %}
+
+<div id="placeholder">
+</div>
+
+<script>
+$(function() {
+	$("#list").attr("checked", "checked");
+	$("#view :radio").button("refresh");
+	//$("#eventtype").selectmenu({width: 150});
+	
+
+	$("#eventtype").change( function() {
+		console.log("here")
+		$("#placeholder").load(encodeURI("/planner/table/" + $("#eventtype").val() + "/"));
+	});
+
+	$("#eventtype").trigger("change");
+})
+</script>
+
+{% endblock %}

@@ -79,7 +79,15 @@ table, th, td, tr,{
 }
 
 .eventtable td{
-    width: 15em;
+    width: 1px;
+    white-space: nowrap;
+    padding-right: 20px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.eventtable ul{
+    width: 200px !important;
 }
 
 ul {

@@ -114,5 +114,28 @@ $(function() {
 
 function onAdd(item, li) {
     li.append('<span><img src="/static/images/yellow_circle.png" height="16" width="16" style="margin-right:2px"></span>');
+    console.log(item);
+        $.ajax({
+           type: "POST",
+           url: "/planner/event/{{pk}}/participation/" + li.parent().parent().children("input").attr("name") + "/add/" + item.id + "/",
+           data: {csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value}, // serializes the form's elements.
+           success: function(data)
+           {
+               console.log("great success");
+           }
+         });
+    }
+
+function onDelete(item, li) {
+    console.log(li);
+        $.ajax({
+           type: "POST",
+           url: "/planner/event/{{pk}}/participation/" + li.attr("name") + "/delete/" + item.id + "/",
+           data: {csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value}, // serializes the form's elements.
+           success: function(data)
+           {
+               console.log("great success");
+           }
+         });
     }
 </script>

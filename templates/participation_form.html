@@ -51,7 +51,6 @@ $(function () {
 </div>
 <script>
 $("form").submit( function() {
-    console.log();
     $.ajax({
            type: "POST",
            url: $(this).attr("action"),
@@ -61,8 +60,7 @@ $("form").submit( function() {
                console.log("great success");
            }
          });
-         
-    return false;
+     return false;
 });
 </script>
 {% endblock %}

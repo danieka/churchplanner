@@ -1,16 +1,7 @@
 {% extends "base.html" %}
 
 {% block menu %}
-<div style="float:left" class="menu_launcher">
-    Nytt evenemang
-   <div class="menu_container ui-widget-content">
-        <ul class="menu">
-        {% for name in eventtype %}
-            <li class="new_event" value="{{name}}">{{name}}</li>
-        {% endfor %}
-        </ul>
-    </div>
-</div>
+{% include "menu.html" %}
 {% endblock %}
 
 {% block body %}
@@ -55,7 +46,7 @@
 
 <script>
 function get_events() {
-    var url = "planner/getevents/" + $("#event_start_date").val() + '--' + $("#event_end_date").val() + '/'
+    var url = "/planner/getevents/" + $("#event_start_date").val() + '--' + $("#event_end_date").val() + '/'
     if ($.selected_events.length == 0){
         $.getJSON( url, function( data ) {
             update_events(data);
