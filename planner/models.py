@@ -191,6 +191,9 @@ class Participation(models.Model):
             src = "/static/images/cross.png"
         return "<img style='float:right;height:9px; margin-right:15px' src='%s'>" % src
 
+    def __unicode__(self):
+        return u"%s - %s - %s" % (self.user.first_name + " " + self.user.last_name, self.role.name, self.event.title)
+
 
 def send_login(self):
     send_mail(
