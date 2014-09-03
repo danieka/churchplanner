@@ -20,8 +20,7 @@ try:
 except:
     wand_imported = False
 
-# Create your models here.
-page_id = 185831898118166 #Rossenspage id
+
 sender = "daniel.karlsson@roseniuskyrkan.se"
 signature = u"""
 Med Vänliga Hälsningar
@@ -112,7 +111,7 @@ class Event(models.Model):
     title = models.CharField(max_length=100, verbose_name="Titel")
     description = models.CharField(blank = True, null = True, max_length=4000, verbose_name="Beskrivning")
     facebook_publish = models.BooleanField(default = False, verbose_name="Facebook")
-    publish_date = models.DateField(blank = True, null = True, verbose_name="Publiceringsdatum")
+    publish_date = models.DateField(blank = True, null = True, verbose_name="Publiceringsdatum") #This is used if we manually want to set the date to publish
     internal_notes = models.CharField(blank = True, null = True, max_length=4000, verbose_name="Anteckningar")
     published = models.BooleanField(default = False)
     email_sent = models.BooleanField(default = False)
@@ -123,12 +122,21 @@ class Event(models.Model):
     def __unicode__(self):
         return self.title
     
-    def publish(self):
-        if not settings.DEBUG:
+    def publish_to_facebook(self):
+        if self.facebook_publish == True:
             token = Token.objects.all()[:1].get().token
             fb = OpenFacebook(token)
-            print fb.set(str(page_id) + "/events", no_feed_story = "true", name=self.title, description = self.description, start_time = self.event.start_time.isoformat(), location_id=page_id, picture = "584610018240350")
-            self.published = True    
+            #resp = fb.set(settings.FACEBOOK_PAGE_ID + "/events", no_feed_story = "true", name=self.title, description = self.description, start_time = self.event.start_time.isoformat())
+            #print resp
+            #if type(resp) == dict:
+            #    id = resp["id"]
+            event_id = "625452070886922"
+            f = self.event_type.image
+
+            print fb.set(event_id + "/picture", source = "%7B" + f.read() + "%7D")
+            print f.read()
+            self.published = True
+            self.save()    
             
     def delete(self, *args, **kwargs):
         self.event.delete()
@@ -137,7 +145,7 @@ class Event(models.Model):
     def send_mail(self):
         rlist = [sender]
         roles = {}
-        msg = message % (self.event_type.name)
+        msg = message % (self.title + ", " + (self.event.start_time + datetime.timedelta(hours = 2)).strftime("%Y-%m-%d %H:%M"))
         
         for participant in self.participants.all():
             rlist.append(participant.email)
@@ -152,10 +160,10 @@ class Event(models.Model):
             
         
         msg += signature
-        if settings.SEND_REMINDER == True and self.email_sent == False:
+        if self.email_sent == False:
             try:         
                 send_mail(
-                    subject = self.event_type.name + " " + self.event.start_time.date().strftime("%Y-%m-%d"),
+                    subject = self.event_type.name + " " + self.event.start_time.strftime("%Y-%m-%d"),
                     from_email = sender,
                     recipient_list = set(rlist),
                     message = msg,

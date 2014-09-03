@@ -2,7 +2,7 @@ from django.contrib import admin
 from models import *
 
 class ParticipationAdmin(admin.ModelAdmin):
-	list_filter = ("user", "event")
+	list_filter = ("user", "role", "event")
 
 admin.site.register(Occurrence)
 admin.site.register(Token)

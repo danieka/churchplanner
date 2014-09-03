@@ -16,6 +16,8 @@ logger = logging.getLogger("churchplanner")
 
 @task
 def publish_task():
+    if not settings.PUBLISH_TO_FACEBOOK:
+        return
     events = Event.objects.all()
     for event in events:
         if event.facebook and not event.published:
@@ -24,10 +26,11 @@ def publish_task():
                 
 @task
 def send_email_task():
-    if settings.SEND_REMINDER:
-        events = Event.objects.filter(event__start_time__range=[datetime.date.today(), datetime.date.today() + datetime.timedelta(days=5)])
-        for event in events:
-            event.send_mail()
+    if not settings.SEND_REMINDER_EMAIL:
+        return
+    events = Event.objects.filter(event__start_time__range=[datetime.date.today(), datetime.date.today() + datetime.timedelta(days=6)])
+    for event in events:
+        event.send_mail()
             
 @task            
 def send_email_participation():

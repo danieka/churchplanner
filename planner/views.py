@@ -61,7 +61,7 @@ class LoginRedirect(OAuthRedirect):
     def get_additional_parameters(self, provider):
         """We need to ask facebook for permissions to create events on the facebook page."""
         if provider.name == 'facebook':
-            return {'scope': "create_event"}
+            return {'scope': "manage_pages"}
         return super(AdditionalPermissionsRedirect, self).get_additional_parameters(provider)
 
     def get_callback_url(self, provider):
@@ -199,8 +199,8 @@ def account_initialize(request):
     
 def test(request):
     """This is just a function I use when I want to test a function."""
-    resp = "a"
-    return HttpResponse(resp, content_type="application/json")
+    Event.objects.get(pk = 19).publish_to_facebook()
+    return HttpResponse("a", content_type="application/json")
 
 @login_required
 def fileuploader(request, pk):

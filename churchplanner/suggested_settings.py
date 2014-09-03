@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'zwerjhuo42ci^8b8qn&oy!&clz!iaytau+ael8$f3@=oov!5bj'
+SECRET_KEY = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -131,7 +131,6 @@ LOGIN_REDIRECT_URL="/"
 LOGIN_URL="/login"
 
 SITE_ROOT = "localhost:8000"
-
 EMAIL_HOST = "localhost"
 EMAIL_PORT = "1025"
 
@@ -166,8 +165,11 @@ EMAIL_PORT = "1025"
 
 SEND_REMINDER_EMAIL = False
 SEND_PARTICIPATION_EMAIL = False
+
+PUBLISH_TO_FACEBOOK = False
 FACEBOOK_APP_ID = ""
 FACEBOOK_APP_SECRET =""
+FACEBOOB_PAGE_ID = ""   #This is the ID of the page that the events should be published to.
 
 LOGGING = {
     'version': 1,
