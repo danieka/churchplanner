@@ -229,17 +229,17 @@ def participation_form(request, pk = None):
             
 
     if not request.user:
-        user = authenticate(hash=request.GET['hash'], pk = request.GET['user'])
+        user = authenticate(hash=request.GET['hash'].replace("/", ""), pk = request.GET['user'])
     else:
         if request.user.is_anonymous():
             user = authenticate(hash=request.GET['hash'], pk = request.GET['user'])
         else:
             user = request.user
     
-    try:   
-        upcoming = user.participation_set.filter(event__event__start_time__gte=datetime.datetime.now())
-    except:
-        logger.error(request)
+    #try:   
+    upcoming = user.participation_set.filter(event__event__start_time__gte=datetime.datetime.now())
+    #except:
+    #    logger.error(request)
 
     events = []
     for event in upcoming:
