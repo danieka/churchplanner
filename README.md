@@ -13,14 +13,14 @@ Installation should be rather simple, first of you will need a lot of dependenci
 
 django
 django-all-access
-south
 pytz
 django-crispy-forms
 Django-facebook
 celery
 django-celery
 wand
-pil
+pillow
+mailsnake
 
 Besides that you need libmagickwand-dev, you can try:
 apt-get install libmagickwand-dev
