@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 from celery.decorators import task
-from models import Event, generate_user_hash, sender
+from planner.models import Event, generate_user_hash, sender
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.template import loader, Context
@@ -64,8 +64,6 @@ def send_email_participation():
             event_set = user.participation_set.filter(event__event__start_time__gte= timezone.now(), email_sent = False)
             event_set = chain(event_set, user.participation_set.filter(event__event__start_time__gte= timezone.now(), attending = "null", last_email_sent__lte = datetime.date.today() - datetime.timedelta(days = 7)))
             for participation in event_set:
-                print participation
                 participation.email_sent = True
                 participation.last_email_sent = datetime.date.today()
-                print participation.last_email_sent
                 participation.save()

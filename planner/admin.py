@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import *
+from planner.models import *
 
 class ParticipationAdmin(admin.ModelAdmin):
 	list_filter = ("user", "role", "event")

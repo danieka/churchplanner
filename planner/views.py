@@ -15,8 +15,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils.encoding import iri_to_uri
 from django.views.generic.edit import FormView
 
-from models import Token, Document
-from forms import *
+from planner.models import Token, Document
+from planner.forms import *
 from open_facebook.api import FacebookAuthorization, OpenFacebook
 
 from django.core.urlresolvers import reverse
@@ -24,10 +24,10 @@ from allaccess.views import OAuthRedirect, OAuthCallback
 from django.contrib.auth import authenticate, login
 from itertools import chain
 
-import os, StringIO
+import os
 from django.conf import settings
 from django.views.decorators.http import require_POST
-import tasks
+import planner.tasks
 from mailsnake import MailSnake
 from mailsnake.exceptions import *
 from django.utils.decorators import method_decorator
@@ -142,15 +142,12 @@ def event_form(request, pk = None, eventtype = None):
             instance = Event.objects.get(pk = pk)
     
     if request.method == "GET":
-        try:
-            if pk:
-                title = instance.title
-                form = EventForm(instance = instance, user = request.user, event_type = eventtype)
-            else:
-                title = ("Ny %s" % eventtype)
-                form = EventForm(user=request.user, event_type = eventtype)
-        except Exception, e:
-            logging.error("%s does not match any event. \n %s %s" % (eventtype, Exception, e)) 
+        if pk:
+            title = instance.title
+            form = EventForm(instance = instance, user = request.user, event_type = eventtype)
+        else:
+            title = ("Ny %s" % eventtype)
+            form = EventForm(user=request.user, event_type = eventtype)
 
 
     elif request.method == "POST":
@@ -249,6 +246,7 @@ def participation_form(request, pk = None):
 @login_required
 def participation_add(request, pk, participation_name, user):
     if request.method == "POST":
+        print(participation_name)
         Participation.objects.create(user = User.objects.get(pk = user), 
             event = Event.objects.get(pk = pk), 
             attending = "null", 
@@ -309,7 +307,7 @@ def get_mailchimp_users(request):
     #     messages.error(request, "The list does not exist")
     #     return redirect('/')
     
-    except mailchimp.Error, e:
+    except mailchimp.Error as e:
         print(request, 'An error occurred: %s - %s' % (e.__class__, e))
         return redirect('/')
     
@@ -326,5 +324,5 @@ def get_mailchimp_users(request):
 
 @login_required
 def send_email_participation(request):
-    tasks.send_email_participation()
+    planner.tasks.send_email_participation()
     return render(request, "confirmation.html", {"text": "Manuella förfrågningar ivägskickade."})

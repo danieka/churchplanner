@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.utils.html import mark_safe
 from django.forms import ModelForm, SelectMultiple, ValidationError, DateInput, Textarea, DateField, TimeField, Form
-from models import Occurrence, Event, EventType, Participation, Role, Document
+from planner.models import Occurrence, Event, EventType, Participation, Role, Document
 from django.core.urlresolvers import reverse_lazy
 import pytz
 
@@ -14,7 +14,7 @@ from django.core.files import File
 import json
 import datetime
 from jquery_fields.fields import ModelMultipleChoiceTokenInputField
-from widgets import ParticipationTokenInputWidget
+from planner.widgets import ParticipationTokenInputWidget
 
 class EventForm(ModelForm):
     """This is the form for all events."""
@@ -71,12 +71,12 @@ class EventForm(ModelForm):
             for role in self.event_type.roles.all():
                 checked_pk = []
 
-                for user in self.cleaned_data[role.name.encode('ascii', 'ignore')]:
+                for user in self.cleaned_data[role.name]:
                     if len(user.participation_set.filter(event = self.instance, role = role)) == 0:
                         Participation.objects.create(user = user, event = self.instance, attending = "null", role = role)
 
                 for participation in Participation.objects.filter(role=role, event = self.instance):
-                    if participation.user not in self.cleaned_data[role.name.encode('ascii', 'ignore')]:
+                    if participation.user not in self.cleaned_data[role.name]:
                         participation.delete()
                     
         return instance
@@ -87,8 +87,8 @@ class EventForm(ModelForm):
             field = ModelMultipleChoiceTokenInputField(queryset=User.objects.all(), widget=ParticipationTokenInputWidget, required = False, json_source="/planner/users/", label=role.name, 
                     configuration = {}
                     , initial = {}, event = self.instance, role = role)
-            self.fields[role.name.encode('ascii', 'ignore')] = field
-            self.helper.layout.fields[0].append(role.name.encode('ascii', 'ignore'))
+            self.fields[role.name] = field
+            self.helper.layout.fields[0].append(role.name)
             
     def bind_fields(self):
         """Here we initialize the form from a existing event."""
@@ -103,7 +103,7 @@ class EventForm(ModelForm):
             #iterate through all existing participants to initialize the form
             relations = participant.participation_set.filter(event = self.instance) #Get the M2M-object
             for relation in relations:
-                self.fields[relation.role.name.encode('ascii', 'ignore')].initial[participant] = None
+                self.fields[relation.role.name].initial[participant] = None
         
         
     class Meta:

@@ -133,8 +133,8 @@ class Event(models.Model):
             event_id = "625452070886922"
             f = self.event_type.image
 
-            print fb.set(event_id + "/picture", source = "%7B" + f.read() + "%7D")
-            print f.read()
+            print(fb.set(event_id + "/picture", source = "%7B" + f.read() + "%7D"))
+            print(f.read())
             self.published = True
             self.save()    
             

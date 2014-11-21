@@ -4,7 +4,6 @@ import json
 from django.conf import settings
 from django.forms import Textarea, forms
 from django.forms.widgets import flatatt, DateTimeInput
-from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 
 
@@ -97,7 +96,7 @@ class BootstrapDateTimePicker(DateTimeInput):
         final_attrs = self.build_attrs(attrs, type=self.input_type, name=name)
         if value != '':
             # Only add the 'value' attribute if a value is non-empty.
-            final_attrs['value'] = force_unicode(self._format_value(value))
+            final_attrs['value'] = self._format_value(value)
         context = {
             'id': final_attrs.get('id', '_').replace(" ", ""),
             'attrs': flatatt(final_attrs),

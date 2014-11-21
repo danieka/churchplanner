@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from models import Participation
+from planner.models import Participation
 import json
 from copy import copy
 from django.forms.widgets import flatatt
@@ -36,7 +36,7 @@ class ParticipationTokenInputWidget(TokenInputWidget):
 
         if value is not None:
             if self.event == None:
-        	   configuration['prePopulate'].extend([{'id': v, 'name': label} for v, label in self.choices])
+                configuration['prePopulate'].extend([{'id': v, 'name': label} for v, label in self.choices])
             else:
                 for v, label in self.choices:
                     if User.objects.get(pk=v).participation_set.get(event=self.event, role=self.role).attending == "null":

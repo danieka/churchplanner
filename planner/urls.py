@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
 
-from views import *
+from planner.views import *
 
 urlpatterns = patterns('',
                        (r'^extended/$', login_required(TemplateView.as_view(template_name='main.html'))),
