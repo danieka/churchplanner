@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block body %}
+<table id="table" class="eventtable"> 
+	    <tr class="sticky" style="background-color: #fff !important;">
+	    {% for name in columns %}
+	    <th><span class="text">{{name}}</span></th>
+	    {% endfor %}
+	    </tr>
+	<tbody>
+	{% for event in events %}
+		<tr>
+			{% for column in event %}
+				<td width=1>
+				{% for user in column %}
+					{{user}} </br>
+				{% endfor %}
+				</td>
+			{% endfor %}
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+
+{% endblock %}
