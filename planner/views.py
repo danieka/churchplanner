@@ -99,6 +99,7 @@ def get_events(request, start, end):
     response = json.dumps({'events': data})
     return HttpResponse(response, content_type="application/json")
 
+@login_required
 def event_table(request, eventtype):
     l = []
     for user in User.objects.all():
@@ -118,9 +119,26 @@ def event_table(request, eventtype):
                 configuration = {"prePopulate": [{"id": participation.user.pk, "name": participation.user.first_name + " " + participation.user.last_name, "status": participation.status_as_icon()} for participation in Participation.objects.filter(event = event, role = role)]},
                 event = event, 
                 role = role,)
-            t.append(widget.render(role.name, "aa", attrs = {"id": unicode(role.name) + "-" + str(event.pk)}))
+            t.append(widget.render(role.name, "aa", attrs = {"id": role.name + "-" + str(event.pk)}))
         events.append({"columns": t, "pk": event.pk})
     return render(request, "event_table_view.html", {"columns": columns, "events": events, "users": users})
+
+def overview(request, eventtype, year):
+    eventtype = EventType.objects.get(name = eventtype)
+    columns = ["Datum", "Titel"]
+    for role in eventtype.roles.all():
+        columns.append(role.name)
+    events = []
+    for event in Event.objects.filter(event_type = eventtype, event__start_time__gte = date.today(), event__start_time__year = year).order_by("event__start_time"):
+        t = [[event.event.start_time.strftime("%d %B %Y")], [event.title]]
+        for role in eventtype.roles.all():
+            participations = Participation.objects.filter(event = event, role = role, attending = "true")
+            l = []
+            for participation in participations:
+                l.append("%s %s" % (participation.user.first_name, participation.user.last_name))
+            t.append(l)
+        events.append(t)
+    return render(request, "overview.html", {"columns": columns, "events": events})
 
 @login_required
 def event_form(request, pk = None, eventtype = None):
@@ -193,7 +211,8 @@ def account_initialize(request):
     else:
         login(request, user)
         return render(request, 'register.html')
-    
+  
+@login_required    
 def test(request):
     """This is just a function I use when I want to test a function."""
     Event.objects.get(pk = 19).publish_to_facebook()

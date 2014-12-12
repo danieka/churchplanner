@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, RedirectView
 from planner.views import *
 from django.contrib.auth.decorators import login_required
 from django.contrib import admin
@@ -16,6 +16,7 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^planner/', include('planner.urls')),
+    url(r'^2015/$', RedirectView.as_view(url="/planner/overview/Gudstjänst/2015/", permanent=False)),
     url(r'^associate/(?P<provider>(\w|-)+)/$', login_required(AssociateRedirect.as_view()), name='associate'),
     url(r'^associate-callback/(?P<provider>(\w|-)+)/$', login_required(AssociateCallback.as_view()), name='associate-callback'),
     url(r'^login/(?P<provider>(\w|-)+)/$', LoginRedirect.as_view(), name='login'),

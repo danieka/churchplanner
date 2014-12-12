@@ -5,7 +5,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>   
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
     <script type="text/javascript" src="http://malsup.github.io/min/jquery.form.min.js"></script>
-    <script type="text/javascript" src="https://raw2.github.com/kayahr/jquery-fullscreen-plugin/master/jquery.fullscreen-min.js"></script>
+    <script type="text/javascript" src="https://raw.githubusercontent.com/kayahr/jquery-fullscreen-plugin/master/jquery.fullscreen-min.js"></script>
     <script type="text/javascript" src="/static/js/ui.js"></script>
 
     <link id="ui-theme" rel="stylesheet" href="/static/css/theme/jquery-ui.css" />
@@ -36,10 +36,9 @@
 
 {% if user.is_authenticated %}
 <img style="float:right" src="/static/images/fullscreen.jpeg" height="30" onclick="$(document).fullScreen(true);">
-{% endif %}
+
 
 <a style="float:right" class="a_button" href="/logout"> Logga ut </a>
-{% if user.is_authenticated %}
 <div class="menu_launcher" style="float:right">
    Administration
    <div class="menu_container ui-widget-content">

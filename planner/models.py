@@ -161,7 +161,7 @@ class Event(models.Model):
         
         msg += signature
         if self.email_sent == False:
-            try:         
+            try:   #TODO: Remove catch all except       
                 send_mail(
                     subject = self.event_type.name + " " + self.event.start_time.strftime("%Y-%m-%d"),
                     from_email = sender,
