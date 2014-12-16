@@ -134,6 +134,7 @@ SITE_ROOT = "localhost:8000"
 EMAIL_HOST = "localhost"
 EMAIL_PORT = "1025"
 
+SENDER = "admin@example.com"
 
 #Uncomment this whole section if you have celery installed.
 # The backend used to store task results - because we're going to be 
