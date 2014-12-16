@@ -14,6 +14,7 @@ def event(date):
     e = Event.objects.create(title="TestEvent", event_type=EventType.objects.get(name="Gudstjänst"))
     e.event =  Occurrence.objects.create(start_time = tz.localize(date))
     Participation.objects.create(user = User.objects.get(pk=2), event = e, attending = "true", role = Role.objects.get(name = "Mötesledare"))
+    Participation.objects.create(user = User.objects.get(pk=3), event = e, attending = "null", role = Role.objects.get(name = "Textläsare"))
     e.save()
 
 class TestCreateEvent(TestCase):
@@ -29,10 +30,10 @@ class TestCreateEvent(TestCase):
 
     def testParticipation(self):
         e = Event.objects.get(title="TestEvent")
-        self.assertEqual(len(e.participants.all()), 1)
+        self.assertEqual(len(e.participants.all()), 2)
         self.assertEqual(e.participants.all()[0], User.objects.get(username = "Test.1"))
 
-class TestReminder(TestCase):
+class TestReminderEmail(TestCase):
     fixtures = ["fixture1.json"]
     def setUp(self):
         event(datetime.datetime.now() + datetime.timedelta(days=2))
@@ -54,3 +55,24 @@ class TestReminder(TestCase):
 
         self.assertEqual(len(mail.outbox), 1)
 
+class TestParticipationEmail(TestCase):
+    fixtures = ["fixture1.json"]
+
+    def setUp(self):
+        event(datetime.datetime.now() + datetime.timedelta(days=2))
+
+    def testSend(self):
+        e = Event.objects.get(title="TestEvent")
+        send_email_participation()
+
+        self.assertEqual(len(mail.outbox), 1)
+        m = mail.outbox[0]
+        self.assertEqual(len(m.to), 1)
+        self.assertTrue(User.objects.get(username = "Test.2").email in m.to)
+        self.assertEqual(m.subject, "Kan du hjälpa till?")
+
+    def testDuplicate(self):
+        send_email_participation()
+        send_email_participation()
+
+        self.assertEqual(len(mail.outbox), 1)

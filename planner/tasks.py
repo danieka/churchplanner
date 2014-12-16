@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import datetime
-from celery.decorators import task
 from planner.models import Event, generate_user_hash, sender
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -15,7 +14,6 @@ import logging
 
 logger = logging.getLogger("churchplanner")
 
-@task
 def publish_task():
     if not settings.PUBLISH_TO_FACEBOOK:
         return
@@ -25,15 +23,13 @@ def publish_task():
             if event.publish_date >= datetime.date.today():
                 event.publish()
                 
-@task
 def send_email_task():
     if not settings.SEND_REMINDER_EMAIL:
         return
     events = Event.objects.filter(event__start_time__range=[datetime.date.today(), datetime.date.today() + datetime.timedelta(days=6)])
     for event in events:
         event.send_mail()
-            
-@task            
+                     
 def send_email_participation():
     if not settings.SEND_PARTICIPATION_EMAIL:
         return
@@ -45,7 +41,7 @@ def send_email_participation():
         events = []
         to = user.email
         url = settings.SITE_ROOT + "/planner/participation/?user=" + str(user.pk) + "&hash=" + generate_user_hash(user.pk)
-        event_set = user.participation_set.filter(event__event__start_time__gte= timezone.now(), email_sent = False)
+        event_set = user.participation_set.filter(event__event__start_time__gte= timezone.now(), email_sent = False, attending="null")
         event_set = chain(event_set, user.participation_set.filter(event__event__start_time__gte= timezone.now(), attending = "null", last_email_sent__lte = datetime.date.today() - datetime.timedelta(days = 7)))
         for participation in event_set:
             events.append({'date':participation.event.event.start_time, 'type': participation.event.event_type.name, 'role': participation.role.name})
