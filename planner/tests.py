@@ -69,6 +69,7 @@ class TestParticipationEmail(TestCase):
         self.assertEqual(len(m.to), 1)
         self.assertTrue(User.objects.get(username = "Test.2").email in m.to)
         self.assertEqual(m.subject, "Kan du hjälpa till?")
+        self.assertEqual(m.from_email, "daniel.karlsson@roseniuskyrkan.se")
 
     def testDuplicate(self):
         send_email_participation()

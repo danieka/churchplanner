@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
-from planner.models import Event, generate_user_hash, sender
+from planner.models import Event, generate_user_hash
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.template import loader, Context
@@ -48,7 +48,7 @@ def send_email_participation():
             events.append({'date':participation.event.event.start_time, 'type': participation.event.event_type.name, 'role': participation.role.name})
             
         if len(events) != 0:
-            from_email =sender           
+            from_email = settings.SENDER          
             html = loader.get_template(template_html)
             c = Context({ 'events': events, 'name': user.first_name + " " + user.last_name, 'url':url })
             html_content = html.render(c)
@@ -60,6 +60,7 @@ def send_email_participation():
             except ValueError as e:
                 logger.error("Exception: %s" % e)
                 logger.error("To: %s" % to)
+                logger.error("From %s" % sender)
                 logger.error(traceback.format_exc())
                 continue
 

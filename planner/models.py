@@ -20,8 +20,6 @@ try:
 except:
     wand_imported = False
 
-sender = ["daniel.karlsson@roseniuskyrkan.se"]
-
 signature = u"""
 Med Vänliga Hälsningar
 Daniel Karlsson
@@ -165,7 +163,7 @@ class Event(models.Model):
             try:   #TODO: Remove catch all except       
                 send_mail(
                     subject = self.event_type.name + " " + self.event.start_time.strftime("%Y-%m-%d"),
-                    from_email = sender,
+                    from_email =  settings.SENDER,
                     recipient_list = set(rlist),
                     message = msg,
                     )
