@@ -22,7 +22,7 @@ class TestCreateEvent(TestCase):
         event(datetime.datetime.now())
 
     def testEvent(self):
-        e = Event.objects.get(title="TestEvent")
+        e = Event.objects.get(title="TestEvent") 
         self.assertIsNotNone(e)
         self.assertEqual(e.event_type.name, "Gudstjänst")
         self.assertIsNotNone(e.event)
