@@ -31,7 +31,6 @@ class TestCreateEvent(TestCase):
     def testParticipation(self):
         e = Event.objects.get(title="TestEvent")
         self.assertEqual(len(e.participants.all()), 2)
-        self.assertEqual(e.participants.all()[0], User.objects.get(username = "Test.1"))
 
 class TestReminderEmail(TestCase):
     fixtures = ["fixture1.json"]
