@@ -54,7 +54,11 @@ def send_email_participation():
 
             msg = EmailMessage(subject,html_content, from_email, [to])
             msg.content_subtype = "html"
-            msg.send()
+            try:
+                msg.send()
+            except ValueError as e:
+                logger.error("Exception: %s" % e)
+                logger.error("To: %s" % to)
 
             logger.info(html_content)
 
