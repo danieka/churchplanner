@@ -48,3 +48,9 @@ class TestReminder(TestCase):
         self.assertTrue(User.objects.get(pk = 1).email in m.to)
         self.assertEqual(m.subject, e.event_type.name + " " + e.event.start_time.strftime("%Y-%m-%d"))
 
+    def testDuplicate(self):
+        send_email_task()
+        send_email_task()
+
+        self.assertEqual(len(mail.outbox), 1)
+
