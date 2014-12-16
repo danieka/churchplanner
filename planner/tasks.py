@@ -59,6 +59,7 @@ def send_email_participation():
             except ValueError as e:
                 logger.error("Exception: %s" % e)
                 logger.error("To: %s" % to)
+                continue
 
             logger.info(html_content)
 
