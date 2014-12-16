@@ -20,8 +20,8 @@ try:
 except:
     wand_imported = False
 
+sender = ["daniel.karlsson@roseniuskyrkan.se"]
 
-sender = "daniel.karlsson@roseniuskyrkan.se"
 signature = u"""
 Med Vänliga Hälsningar
 Daniel Karlsson
@@ -62,13 +62,13 @@ class Occurrence(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(null = True)
     
-    def __unicode__(self):
-        return unicode(self.start_time.strftime("%d %b %H:%M"), "utf-8")
+    def __str__(self):
+        return self.start_time.strftime("%d %b %H:%M")
 
 class Role(models.Model):
     name = models.CharField(max_length = 30, unique = True)
     
-    def __unicode__(self):
+    def __str__(self):
         return self.name
         
 class EventType(models.Model):
@@ -77,7 +77,7 @@ class EventType(models.Model):
     initial_description = models.TextField(max_length = 4000)
     image = models.ImageField(upload_to="images", null=True, blank = True)
     
-    def __unicode__(self):
+    def __str__(self):
         return self.name
    
 class Document(models.Model):
@@ -86,7 +86,7 @@ class Document(models.Model):
     file_field = models.FileField(upload_to="files", null=True, blank=True)
     thumbnail = models.ImageField(upload_to="files", null=True, blank=True)
     
-    def __unicode__(self):
+    def __str__(self):
         return self.file_field.name
     
 
@@ -143,11 +143,12 @@ class Event(models.Model):
         super(Event, self).delete(*args, **kwargs)
        
     def send_mail(self):
-        rlist = [sender]
+        rlist = [u.email for u in User.objects.filter(is_staff = True)]
         roles = {}
         msg = message % (self.title + ", " + (self.event.start_time + datetime.timedelta(hours = 2)).strftime("%Y-%m-%d %H:%M"))
         
-        for participant in self.participants.all():
+        for participant in self.participation_set.filter(attending = "true"):
+            participant = participant.user
             rlist.append(participant.email)
             for participation in Participation.objects.filter(user= participant, event = self):
                 try:
@@ -199,8 +200,8 @@ class Participation(models.Model):
             src = "/static/images/cross.png"
         return "<img style='float:right;height:9px; margin-right:15px' src='%s'>" % src
 
-    def __unicode__(self):
-        return u"%s - %s - %s" % (self.user.first_name + " " + self.user.last_name, self.role.name, self.event.title)
+    def __str__(self):
+        return "%s - %s - %s" % (self.user.first_name + " " + self.user.last_name, self.role.name, self.event.title)
 
 
 def send_login(self):

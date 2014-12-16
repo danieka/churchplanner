@@ -9,6 +9,7 @@ from django.core.mail import send_mail, EmailMessage
 from django.utils import timezone
 from itertools import chain
 
+
 # views.py
 import logging
 

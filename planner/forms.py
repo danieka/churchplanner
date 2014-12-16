@@ -54,8 +54,8 @@ class EventForm(ModelForm):
             self.instance.event_type = self.event_type
         start_time= datetime.datetime.combine(self.cleaned_data['start_date'], self.cleaned_data['start_time'])
         tz = pytz.timezone("Europe/Stockholm")
+        
         end_time = None
-     
         if self.cleaned_data['end_time'] != None:
             end_time = tz.localize(datetime.datetime.combine(self.cleaned_data['start_date'], self.cleaned_data['end_time']))
         
@@ -141,4 +141,5 @@ class SendInvitationsForm(Form):
         initial = {})
 
 
-
+def update_occurance(sender, **kwargs):
+    print("Request finished!")
