@@ -7,6 +7,7 @@ from django.template import loader, Context
 from django.core.mail import send_mail, EmailMessage
 from django.utils import timezone
 from itertools import chain
+import traceback
 
 
 # views.py
@@ -59,6 +60,7 @@ def send_email_participation():
             except ValueError as e:
                 logger.error("Exception: %s" % e)
                 logger.error("To: %s" % to)
+                logger.error(traceback.format_exc())
                 continue
 
             logger.info(html_content)
