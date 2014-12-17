@@ -31,6 +31,10 @@ class TestCreateEvent(TestCase):
     def testParticipation(self):
         e = Event.objects.get(title="TestEvent")
         self.assertEqual(len(e.participants.all()), 2)
+        p = e.participation_set.filter(attending = "null")[0]
+        p.attending = "true"
+        p.save()
+        self.assertEqual(len(Participation.objects.filter(updated = True)), 1)
 
 class TestReminderEmail(TestCase):
     fixtures = ["fixture1.json"]
@@ -75,4 +79,25 @@ class TestParticipationEmail(TestCase):
         send_email_participation()
         send_email_participation()
 
+        self.assertEqual(len(mail.outbox), 1)
+
+class TestUpdatedParticipationEmail(TestCase):
+    fixtures = ["fixture1.json"]
+
+    def setUp(self):
+        event(datetime.datetime.now() + datetime.timedelta(days=2))
+        e = Event.objects.get(title="TestEvent")
+        p = e.participation_set.filter(attending = "null")[0]
+        p.attending = "true"
+        p.save()
+
+    def testParticipation(self):
+        send_updated_participations()
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertTrue("%s %s" % (User.objects.get(pk=3).first_name, User.objects.get(pk=3).last_name), mail.outbox[0].body)
+        self.assertTrue(User.objects.get(pk=1).email in mail.outbox[0].to)
+
+    def testDuplicate(self):
+        send_updated_participations()
+        send_updated_participations()
         self.assertEqual(len(mail.outbox), 1)

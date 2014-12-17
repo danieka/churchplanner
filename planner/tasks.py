@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
-from planner.models import Event, generate_user_hash
+from planner.models import Event, Participation, generate_user_hash
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.template import loader, Context
@@ -14,6 +14,8 @@ import traceback
 import logging
 
 logger = logging.getLogger("churchplanner")
+
+status = {"null": "Obestämt", "true": "Kan medverka", "false": "Kan inte medverka"}
 
 def publish_task():
     if not settings.PUBLISH_TO_FACEBOOK:
@@ -30,6 +32,46 @@ def send_email_task():
     events = Event.objects.filter(event__start_time__range=[datetime.date.today(), datetime.date.today() + datetime.timedelta(days=6)])
     for event in events:
         event.send_mail()
+
+def send_updated_participations():
+    if not settings.SEND_PARTICIPATION_EMAIL:
+        return
+    updated = Participation.objects.filter(updated = True)
+    if len(updated) == 0:
+        return
+
+    template_html = 'updated_participations.html'
+    subject = "Uppdaterade anmälningar"
+    participations = []
+    for p in updated:
+        t = {}
+        t['type'] = p.event.event_type.name
+        t['date'] = p.event.event.start_time
+        t['role'] = p.role
+        t['name'] = "%s %s" % (p.user.first_name, p.user.last_name)
+        t['status'] = status[p.attending]
+
+    rlist = [u.email for u in User.objects.filter(is_staff = True)]
+    from_email = settings.SENDER          
+    html = loader.get_template(template_html)
+    c = Context({ 'participations': participations})
+    html_content = html.render(c)
+
+    msg = EmailMessage(subject,html_content, from_email, rlist)
+    msg.content_subtype = "html"
+    try:
+        msg.send()
+    except ValueError as e:
+        logger.error("Exception: %s" % e)
+        logger.error("To: %s" % rlist)
+        logger.error("From %s" % sender)
+        logger.error(traceback.format_exc())
+        return
+
+    for p in updated:
+        p.updated = False
+        p.save()
+    logger.info(html_content)
                      
 def send_email_participation():
     if not settings.SEND_PARTICIPATION_EMAIL:

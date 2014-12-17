@@ -188,6 +188,13 @@ class Participation(models.Model):
     role = models.ForeignKey(Role)
     email_sent = models.BooleanField(default = False)
     last_email_sent = models.DateField(blank = True, null = True)
+    updated = models.BooleanField(default = False)
+
+    __original_attending = None
+
+    def __init__(self, *args, **kwargs):
+        super(Participation, self).__init__(*args, **kwargs)
+        self.__original_attending = self.attending #We need the original value for the save method.
 
     def status_as_icon(self):
         if self.attending == "null":
@@ -200,6 +207,13 @@ class Participation(models.Model):
 
     def __str__(self):
         return "%s - %s - %s" % (self.user.first_name + " " + self.user.last_name, self.role.name, self.event.title)
+
+    def save(self, *args, **kwargs):
+        """We override this because we want to queue all changes to participations so that we can mail them to staff."""
+        if self.__original_attending != self.attending:
+            self.updated = True
+        super(Participation, self).save(*args, **kwargs)
+        
 
 
 def send_login(self):

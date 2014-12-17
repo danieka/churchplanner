@@ -25,7 +25,6 @@ $(function() {
 	
 
 	$("#eventtype").change( function() {
-		console.log("here")
 		$("#placeholder").load(encodeURI("/planner/table/" + $("#eventtype").val() + "/"));
 	});
 
