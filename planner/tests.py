@@ -102,9 +102,9 @@ class TestUpdatedParticipationEmail(TestCase):
     def testParticipation(self):
         send_updated_participations()
         self.assertEqual(len(mail.outbox), 1)
-        self.assertTrue("%s %s" % (User.objects.get(pk=3).first_name, User.objects.get(pk=3).last_name), mail.outbox[0].body)
+        self.assertTrue("%s %s" % (User.objects.get(pk=3).first_name, User.objects.get(pk=3).last_name) in mail.outbox[0].body)
         self.assertTrue(User.objects.get(pk=1).email in mail.outbox[0].to)
-
+        
     def testDuplicate(self):
         send_updated_participations()
         send_updated_participations()
