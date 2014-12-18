@@ -13,6 +13,11 @@ from django.core.files import File
 import pdb
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+import pytz
+from django.template import loader, Context
+from django.core.mail import send_mail, EmailMessage
+
+tz = pytz.timezone("Europe/Stockholm")
 
 try:
     #from wand.image import Image
@@ -27,12 +32,6 @@ Daniel Karlsson
 PS. Detta mailet skickades ut automatiskt med ett nytt system som vi håller på att pröva. 
 Det går jättebra att svara som vanligt och ditt mail kommer då till min vanliga adress. DS."""
 
-message = u"""
-Hej Vänner,
-
-Här kommer en påminnelse om att du har en uppgift på %s enligt följande:
-    
-"""
 login = u"""
 Hej %s,
 
@@ -143,7 +142,6 @@ class Event(models.Model):
     def send_mail(self):
         rlist = [u.email for u in User.objects.filter(is_staff = True)]
         roles = {}
-        msg = message % (self.title + ", " + (self.event.start_time + datetime.timedelta(hours = 2)).strftime("%Y-%m-%d %H:%M"))
         
         for participant in self.participation_set.filter(attending = "true"):
             participant = participant.user
@@ -153,27 +151,20 @@ class Event(models.Model):
                     roles[participation.role.name] += participant.first_name + " " +participant.last_name +", "
                 except KeyError:
                     roles[participation.role.name] = participant.first_name + " " +participant.last_name +", "
-           
-        for k in roles.keys():
-            msg += k +": " + roles[k][:-2] + "\n"
-            
         
-        msg += signature
-        if self.email_sent == False:
-            try:   #TODO: Remove catch all except       
-                send_mail(
-                    subject = self.event_type.name + " " + self.event.start_time.strftime("%Y-%m-%d"),
-                    from_email =  settings.SENDER,
-                    recipient_list = set(rlist),
-                    message = msg,
-                    )
-                self.email_sent = True
+        from_email = settings.SENDER          
+        html = loader.get_template('reminder.html')
+        c = Context({ 'participations': roles, 'event': self})
+        html_content = html.render(c)
+
+        msg = EmailMessage("%s %s" % (self.event_type.name, self.event.start_time.strftime("%Y-%m-%d")),html_content, from_email, set(rlist))
+        msg.content_subtype = "html"       
+        msg.send()
+        self.email_sent = True
+
+        self.save()
                 
-            except:
-                self.email_sent = False
                 
-            self.save()
-    
 class Token(models.Model):
     token = models.CharField(max_length = 250)
     creation_date = models.DateField(auto_now_add=True)

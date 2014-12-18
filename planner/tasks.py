@@ -29,7 +29,7 @@ def publish_task():
 def send_email_task():
     if not settings.SEND_REMINDER_EMAIL:
         return
-    events = Event.objects.filter(event__start_time__range=[datetime.date.today(), datetime.date.today() + datetime.timedelta(days=6)])
+    events = Event.objects.filter(event__start_time__range=[datetime.date.today(), datetime.date.today() + datetime.timedelta(days=6)], email_sent=False)
     for event in events:
         event.send_mail()
 

@@ -1,0 +1,15 @@
+<p>Hej Vänner,</p>
+
+<p>Här kommer en påminnelse om att du har en uppgift på {{event.title}} {{event.event.start_time|date:"d M Y H:i"}} enligt följande:</p>
+    
+
+{% for key, value in participations.items %}
+{{key}}: {{value}}
+{% endfor %}
+
+
+Med Vänliga Hälsningar
+Daniel Karlsson
+
+<p>PS. Detta mailet skickades ut automatiskt med ett nytt system som vi håller på att pröva. 
+Det går jättebra att svara som vanligt och ditt mail kommer då till min vanliga adress. DS.</p>

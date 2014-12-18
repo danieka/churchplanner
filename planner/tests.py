@@ -11,6 +11,7 @@ import pytz
 tz = pytz.timezone("Europe/Stockholm")
 
 def event(date):
+    logging.disable(logging.CRITICAL)
     e = Event.objects.create(title="TestEvent", event_type=EventType.objects.get(name="Gudstjänst"))
     e.event =  Occurrence.objects.create(start_time = tz.localize(date))
     Participation.objects.create(user = User.objects.get(pk=2), event = e, attending = "true", role = Role.objects.get(name = "Mötesledare"))
@@ -39,7 +40,9 @@ class TestCreateEvent(TestCase):
 class TestReminderEmail(TestCase):
     fixtures = ["fixture1.json"]
     def setUp(self):
-        event(datetime.datetime.now() + datetime.timedelta(days=2))
+        t = datetime.datetime.today() + datetime.timedelta(days=2)
+        t = t.replace(hour = 11, minute = 0)
+        event(t)
 
     def testSend(self):
         e = Event.objects.get(title="TestEvent")
@@ -51,6 +54,11 @@ class TestReminderEmail(TestCase):
         self.assertTrue(User.objects.get(username = "Test.1").email in m.to)
         self.assertTrue(User.objects.get(pk = 1).email in m.to)
         self.assertEqual(m.subject, e.event_type.name + " " + e.event.start_time.strftime("%Y-%m-%d"))
+
+    def test_date(self):
+        send_email_task()
+        m = mail.outbox[0]
+        self.assertTrue("11:00" in m.body)
 
     def testDuplicate(self):
         send_email_task()
