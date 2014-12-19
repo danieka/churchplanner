@@ -7,11 +7,10 @@ De senaste 24 timmarna så har följande anmälningar ändrats:
 <th>Datum</th>
 <th>Uppgift</th>
 <th>Person</th>
-<th>Från</th>
-<th>Till</th>
+<th>Status</th>
 </tr>
 {% for participation in participations %}
-<tr><td>{{participation.type}}</td><td> {{participation.date|date:"d M Y H:i"}}</td><td>{{participation.role}}</td><td>{{participation.name}}</td><td>{{participation.old_status}}</td><td>{{participation.new_status}}</td></tr>
+<tr><td>{{participation.type}}</td><td> {{participation.date|date:"d M Y H:i"}}</td><td>{{participation.role}}</td><td>{{participation.name}}</td><td>{{participation.status}}</td></tr>
 {% endfor %}
 </table>
 

@@ -15,7 +15,7 @@ import logging
 
 logger = logging.getLogger("churchplanner")
 
-status = {"null": "Obestämt", "true": "Kan medverka", "false": "Kan inte medverka"}
+status = {"null": "Obestämd", "true": "Kan medverka", "false": "Kan inte medverka"}
 
 def publish_task():
     if not settings.PUBLISH_TO_FACEBOOK:
@@ -51,6 +51,7 @@ def send_updated_participations():
         t['name'] = "%s %s" % (p.user.first_name, p.user.last_name)
         t['status'] = status[p.attending]
         participations.append(t)
+        
     rlist = [u.email for u in User.objects.filter(is_staff = True)]
     from_email = settings.SENDER          
     html = loader.get_template(template_html)
