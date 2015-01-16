@@ -24,7 +24,7 @@ urlpatterns = patterns('',
     (r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
     (r'^logout/$', logout_then_login),
     (r'^test/$', test),
-    (r'account/new_password/$', password_change, {'post_change_redirect': "/", 'password_change_form': SetPasswordForm}),
+    (r'^account/new_password/$', password_change, {'post_change_redirect': "/", 'password_change_form': SetPasswordForm}),
     (r'^account/initialize/$', account_initialize),
     (r'^$', login_required(TemplateView.as_view(template_name='main.html'))),
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {

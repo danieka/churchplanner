@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#  -*- coding: utf-8 -*-
 from django.db import models
 from django.conf import settings
 from open_facebook.api import OpenFacebook
@@ -7,7 +7,6 @@ import datetime
 from django.core.signing import Signer
 from django.core.mail import send_mail
 from jquery_fields.fields import ModelMultipleChoiceTokenInputField
-from south.modelsinspector import add_introspection_rules  
 
 from django.core.files import File  
 import pdb
