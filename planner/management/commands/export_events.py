@@ -1,8 +1,8 @@
 from django.core.management.base import BaseCommand, CommandError
-from planner.tasks import send_email_participation
+from planner.export import export_events
 
 class Command(BaseCommand):
     help = 'Closes the specified poll for voting'
 
     def handle(self, *args, **options):
-    	send_email_participation()
+    	export_events(args[0], args[1])

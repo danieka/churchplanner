@@ -143,7 +143,6 @@ def overview(request, eventtype, year):
 @login_required
 def event_form(request, pk = None, eventtype = None):
     """View for creating and modifying events."""
-    #BUG: Ändringar i vilka butiker en notering gäller ändras inte
     if eventtype != None:
         try:
             eventtype = urllib.unquote(eventtype.encode('ascii')).decode('utf-8')
